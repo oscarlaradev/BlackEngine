@@ -10,6 +10,8 @@
         x:Name="RootWindow"
         Width="450"
         Height="800"
+        MinWidth="380"
+        MinHeight="650"
         Title="BlackEngine"
         Background="{Binding WindowBackgroundString}"
         ExtendClientAreaToDecorationsHint="True"
@@ -467,96 +469,278 @@
                                    HorizontalAlignment="Center"/>
                     </StackPanel>
 
-                    <!-- CONTENEDOR CENTRAL DE LA RUEDA 3D CON BRÚJULA TÉCNICA -->
+                    <!-- CONTENEDOR CENTRAL DE LA RUEDA 3D CON BRÚJULA TÉCNICA (Súper Responsivo) -->
                     <Border Grid.Row="1"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Width="330"
-                            Height="330"
-                            Background="Transparent">
-                        <!-- TECHNICAL COMPASS CONCENTRIC GRID -->
-                        <Grid Width="330" Height="330" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <!-- Concentric thin circles -->
-                            <Ellipse Width="330" Height="330" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
-                            <Ellipse Width="260" Height="260" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
-                            <Ellipse Width="190" Height="190" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
-                            <Ellipse Width="120" Height="120" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
-                            
-                            <!-- Technical Crosshair axes -->
-                            <Line StartPoint="165,0" EndPoint="165,330" Stroke="#151518" StrokeThickness="1" StrokeDashArray="4,4"/>
-                            <Line StartPoint="0,165" EndPoint="330,165" Stroke="#151518" StrokeThickness="1" StrokeDashArray="4,4"/>
-                            
-                            <!-- Precise Angle HUD Labels -->
-                            <TextBlock Text="N  0°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontFamily="monospace"/>
-                            <TextBlock Text="E  90°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" FontFamily="monospace"/>
-                            <TextBlock Text="S  180°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5" FontFamily="monospace"/>
-                            <TextBlock Text="W  270°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="monospace"/>
-                            
-                            <!-- Actual 3D sphere component -->
-                            <controls:ColorWheelControl SelectedColor="{Binding SelectedSolidColor, Mode=TwoWay}"
-                                                       HorizontalAlignment="Stretch"
-                                                       VerticalAlignment="Stretch"/>
-                        </Grid>
+                            VerticalAlignment="Stretch"
+                            HorizontalAlignment="Stretch"
+                            Background="Transparent"
+                            Margin="0,10,0,10">
+                        <Viewbox Stretch="Uniform" MaxWidth="320" MaxHeight="320" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Grid Width="330" Height="330">
+                                <!-- Concentric thin circles -->
+                                <Ellipse Width="330" Height="330" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                                <Ellipse Width="260" Height="260" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                                <Ellipse Width="190" Height="190" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                                <Ellipse Width="120" Height="120" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                                
+                                <!-- Technical Crosshair axes -->
+                                <Line StartPoint="165,0" EndPoint="165,330" Stroke="#151518" StrokeThickness="1" StrokeDashArray="4,4"/>
+                                <Line StartPoint="0,165" EndPoint="330,165" Stroke="#151518" StrokeThickness="1" StrokeDashArray="4,4"/>
+                                
+                                <!-- Precise Angle HUD Labels -->
+                                <TextBlock Text="N  0°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontFamily="monospace"/>
+                                <TextBlock Text="E  90°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" FontFamily="monospace"/>
+                                <TextBlock Text="S  180°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5" FontFamily="monospace"/>
+                                <TextBlock Text="W  270°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="monospace"/>
+                                
+                                <!-- Actual 3D sphere component -->
+                                <controls:ColorWheelControl SelectedColor="{Binding SelectedSolidColor, Mode=TwoWay}"
+                                                           HorizontalAlignment="Stretch"
+                                                           VerticalAlignment="Stretch"/>
+                            </Grid>
+                        </Viewbox>
                     </Border>
 
-                    <!-- CONTROLES HUD DEL COLOR SELECCIONADO -->
+                    <!-- DECK DE CALIBRACIÓN ULTRA PREMIUM (MEDIO CÍRCULO / PANEL ESFEROIDAL BRUTALISTA) -->
                     <Border Grid.Row="2"
-                            Background="#121212"
-                            BorderBrush="#1C1C1E"
-                            BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="16"
-                            Margin="0,0,0,10">
-                        <StackPanel Spacing="15">
-                            <Grid ColumnDefinitions="Auto,*,Auto">
+                            Background="#0A0A0C"
+                            BorderBrush="#1C1C1F"
+                            BorderThickness="1,1,1,0"
+                            CornerRadius="24,24,0,0"
+                            Padding="18,16,18,16"
+                            Margin="-10,0,-10,0">
+                        <StackPanel Spacing="14">
+                            
+                            <!-- Sección 1: Calibrador de Medio Círculo (sRGB Arc Dial) -->
+                            <Grid HorizontalAlignment="Center" Height="52" Width="120" Margin="0,0,0,6">
+                                <!-- Concentric dashed calibration arches -->
+                                <Path Data="M 5,45 A 50,50 0 0,1 115,45" Stroke="#161619" StrokeThickness="1.5" StrokeDashArray="3,3" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Path Data="M 15,45 A 40,40 0 0,1 105,45" Stroke="#202024" StrokeThickness="1" StrokeDashArray="2,2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Path Data="M 25,45 A 30,30 0 0,1 95,45" Stroke="{Binding SelectedSolidColorBrush}" StrokeThickness="0.75" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 
-                                <!-- Muestra de color circular -->
-                                <Border Grid.Column="0"
-                                        Width="40"
-                                        Height="40"
-                                        CornerRadius="20"
-                                        Background="{Binding SelectedSolidColorBrush}"
-                                        BorderBrush="#1C1C1E"
-                                        BorderThickness="1"/>
+                                <!-- Dynamic Glowing Core (Medio Círculo / Esfera Principal) -->
+                                <Border Width="24" Height="24" CornerRadius="12" 
+                                        Background="{Binding SelectedSolidColorBrush}" 
+                                        BorderBrush="#2A2A2F" BorderThickness="1"
+                                        HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,6">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="12" Color="{Binding SelectedSolidColor}" Opacity="0.4"/>
+                                    </Border.Effect>
+                                </Border>
+
+                                <!-- Complementary Miniature Bubble (Acento del Diseñador) -->
+                                <Border Width="10" Height="10" CornerRadius="5"
+                                        Background="{Binding ComplementarySolidColorBrush}"
+                                        BorderBrush="#1C1C1F" BorderThickness="1"
+                                        HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,25,6"
+                                        ToolTip.Tip="COLOR COMPLEMENTARIO ARMÓNICO">
+                                    <Border.Effect>
+                                        <DropShadowEffect BlurRadius="4" Color="{Binding SelectedSolidColor}" Opacity="0.4"/>
+                                    </Border.Effect>
+                                </Border>
                                 
-                                <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
-                                    <!-- Dynamic Technical Specifications based on device selection -->
-                                    <StackPanel VerticalAlignment="Center" IsVisible="{Binding IsSolidFormatMobile}">
-                                        <TextBlock Text="TARGET: CELULAR (RATIO 9:20)" FontSize="7.5" FontWeight="Black" LetterSpacing="1.2" Foreground="#71717A"/>
-                                        <TextBlock Text="1440 × 3200 PX" FontSize="15" FontWeight="Black" Foreground="White" FontFamily="monospace" Margin="0,1,0,0"/>
+                                <!-- Tech Specs & Calibration Scale -->
+                                <TextBlock Text="0%" FontSize="5.5" FontWeight="Bold" Foreground="#3F3F46" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="4,0,0,4" FontFamily="monospace"/>
+                                <TextBlock Text="100%" FontSize="5.5" FontWeight="Bold" Foreground="#3F3F46" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,4" FontFamily="monospace"/>
+                                <TextBlock Text="sRGB ARC" FontSize="5.5" FontWeight="Black" LetterSpacing="1" Foreground="#52525B" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,1,0,0" FontFamily="monospace"/>
+                            </Grid>
+
+                            <!-- Sección 2: Cabecera del Panel (HEX Input y Dynamic Contrast) -->
+                            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                                <!-- Dynamic Contrast Checker (WCAG Standard) -->
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="ANALIZADOR DE CONTRASTE WCAG" FontSize="6.5" FontWeight="Black" LetterSpacing="1.2" Foreground="#52525B"/>
+                                    <TextBlock Text="{Binding ContrastRatioText}" FontSize="8.5" FontWeight="Bold" Foreground="#A1A1AA" FontFamily="monospace" Margin="0,1,0,0"/>
+                                </StackPanel>
+
+                                <!-- INPUT HEXADECIMAL DEL DISEÑADOR (Interactive Hex Input) -->
+                                <Border Grid.Column="1" 
+                                        Background="#111113" 
+                                        BorderBrush="#252528"
+                                        BorderThickness="1"
+                                        CornerRadius="6" 
+                                        Padding="8,4" 
+                                        VerticalAlignment="Center" 
+                                        Width="105">
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <TextBlock Grid.Column="0" Text="#" FontSize="10.5" FontWeight="Black" Foreground="#52525B" VerticalAlignment="Center" Margin="0,0,3,0"/>
+                                        <TextBox Grid.Column="1"
+                                                 Text="{Binding CustomHexInput, Mode=TwoWay}"
+                                                 PlaceholderText="FFFFFF"
+                                                 Background="Transparent"
+                                                 BorderThickness="0"
+                                                 Foreground="White"
+                                                 FontSize="10"
+                                                 FontFamily="monospace"
+                                                 Padding="0"
+                                                 VerticalAlignment="Center"
+                                                 VerticalContentAlignment="Center"
+                                                 Height="16"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+
+                            <!-- Divider Fino -->
+                            <Border Height="1" Background="#161619"/>
+
+                            <!-- Sección 3: Ajuste de Brillo HSL y Ruido Táctil en una Grilla -->
+                            <Grid RowDefinitions="Auto" ColumnDefinitions="*,*" Margin="0,2,0,2">
+                                
+                                <!-- Calibrador de Brillo HSL (Col 0) -->
+                                <StackPanel Grid.Column="0" Spacing="4" Margin="0,0,8,0">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <TextBlock Grid.Column="0" Text="BRILLO HSL" FontSize="7" FontWeight="Black" LetterSpacing="1" Foreground="#52525B"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Lightness, StringFormat={}{0:F0}%}" FontSize="8" FontWeight="Bold" Foreground="#71717A" FontFamily="monospace"/>
+                                    </Grid>
+                                    <Slider Minimum="0" 
+                                            Maximum="100" 
+                                            Value="{Binding Lightness, Mode=TwoWay}"
+                                            Foreground="White"
+                                            Height="20"
+                                            VerticalAlignment="Center"/>
+                                </StackPanel>
+
+                                <!-- Selector de Ruido Táctil (Col 1) -->
+                                <StackPanel Grid.Column="1" Spacing="4" Margin="8,0,0,0">
+                                    <TextBlock Text="RUIDO TÁCTIL (PAPEL ORGÁNICO)" FontSize="7" FontWeight="Black" LetterSpacing="1" Foreground="#52525B"/>
+                                    <Border Background="#111113" Padding="2" CornerRadius="6" VerticalAlignment="Center">
+                                        <Grid ColumnDefinitions="*,*,*">
+                                            <ToggleButton Grid.Column="0" Content="OFF"
+                                                          IsChecked="{Binding IsGrainNone, Mode=OneWay}"
+                                                          Command="{Binding SwitchGrainLevelCommand}"
+                                                          CommandParameter="0"
+                                                          Height="18"
+                                                          CornerRadius="4"
+                                                          FontSize="7"
+                                                          FontWeight="Black"
+                                                          HorizontalContentAlignment="Center"
+                                                          VerticalContentAlignment="Center"
+                                                          BorderThickness="0">
+                                                <ToggleButton.Styles>
+                                                    <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="White"/>
+                                                        <Setter Property="Foreground" Value="Black"/>
+                                                    </Style>
+                                                    <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                        <Setter Property="Foreground" Value="#505050"/>
+                                                    </Style>
+                                                </ToggleButton.Styles>
+                                            </ToggleButton>
+                                            <ToggleButton Grid.Column="1" Content="FINO"
+                                                          IsChecked="{Binding IsGrainFine, Mode=OneWay}"
+                                                          Command="{Binding SwitchGrainLevelCommand}"
+                                                          CommandParameter="1"
+                                                          Height="18"
+                                                          CornerRadius="4"
+                                                          FontSize="7"
+                                                          FontWeight="Black"
+                                                          HorizontalContentAlignment="Center"
+                                                          VerticalContentAlignment="Center"
+                                                          BorderThickness="0">
+                                                <ToggleButton.Styles>
+                                                    <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="White"/>
+                                                        <Setter Property="Foreground" Value="Black"/>
+                                                    </Style>
+                                                    <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                        <Setter Property="Foreground" Value="#505050"/>
+                                                    </Style>
+                                                </ToggleButton.Styles>
+                                            </ToggleButton>
+                                            <ToggleButton Grid.Column="2" Content="TÁCT"
+                                                          IsChecked="{Binding IsGrainTactile, Mode=OneWay}"
+                                                          Command="{Binding SwitchGrainLevelCommand}"
+                                                          CommandParameter="2"
+                                                          Height="18"
+                                                          CornerRadius="4"
+                                                          FontSize="7"
+                                                          FontWeight="Black"
+                                                          HorizontalContentAlignment="Center"
+                                                          VerticalContentAlignment="Center"
+                                                          BorderThickness="0">
+                                                <ToggleButton.Styles>
+                                                    <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="White"/>
+                                                        <Setter Property="Foreground" Value="Black"/>
+                                                    </Style>
+                                                    <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                        <Setter Property="Background" Value="Transparent"/>
+                                                        <Setter Property="Foreground" Value="#505050"/>
+                                                    </Style>
+                                                </ToggleButton.Styles>
+                                            </ToggleButton>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Divider Fino -->
+                            <Border Height="1" Background="#161619"/>
+
+                            <!-- Sección 4: Copiar código de especificación técnica (Specs) -->
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="COPIAR ESPECIFICACIÓN TÉCNICA (CODE)" FontSize="7" FontWeight="Black" LetterSpacing="1" Foreground="#52525B"/>
+                                <Grid ColumnDefinitions="*,*,*">
+                                    <Button Grid.Column="0" Command="{Binding CopyCodeCommand}" CommandParameter="CSS"
+                                            Background="#111113" Foreground="#A1A1AA" Height="22" Margin="0,0,4,0" CornerRadius="4" BorderBrush="#202023" BorderThickness="1">
+                                        <TextBlock Text="CSS CORE" FontSize="7.5" FontWeight="Black" HorizontalAlignment="Center"/>
+                                    </Button>
+                                    <Button Grid.Column="1" Command="{Binding CopyCodeCommand}" CommandParameter="SWIFT"
+                                            Background="#111113" Foreground="#A1A1AA" Height="22" Margin="2,0,2,0" CornerRadius="4" BorderBrush="#202023" BorderThickness="1">
+                                        <TextBlock Text="SWIFTUI" FontSize="7.5" FontWeight="Black" HorizontalAlignment="Center"/>
+                                    </Button>
+                                    <Button Grid.Column="2" Command="{Binding CopyCodeCommand}" CommandParameter="KOTLIN"
+                                            Background="#111113" Foreground="#A1A1AA" Height="22" Margin="4,0,0,0" CornerRadius="4" BorderBrush="#202023" BorderThickness="1">
+                                        <TextBlock Text="KOTLIN" FontSize="7.5" FontWeight="Black" HorizontalAlignment="Center"/>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+
+                            <!-- Divider Fino -->
+                            <Border Height="1" Background="#161619"/>
+
+                            <!-- Sección 5: Especificaciones de Render, OLED y Selector PC/CEL -->
+                            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="ESPECIFICACIONES DE RENDIMIENTO" FontSize="6.5" FontWeight="Black" LetterSpacing="1" Foreground="#52525B"/>
+                                    <!-- Celular Specs -->
+                                    <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,1,0,0" IsVisible="{Binding IsSolidFormatMobile}">
+                                        <TextBlock Text="CELULAR" FontSize="7.5" FontWeight="Black" Foreground="White"/>
+                                        <TextBlock Text="•  1440 × 3200 PX" FontSize="7.5" FontWeight="Bold" Foreground="#71717A" FontFamily="monospace"/>
+                                        <TextBlock Text="•" FontSize="8" Foreground="#27272A"/>
+                                        <TextBlock Text="{Binding OledSavingText}" FontSize="7.5" FontWeight="Bold" Foreground="#A1A1AA" FontFamily="monospace"/>
                                     </StackPanel>
-                                    <StackPanel VerticalAlignment="Center" IsVisible="{Binding IsSolidFormatPc}">
-                                        <TextBlock Text="TARGET: PC 4K (RATIO 16:9)" FontSize="7.5" FontWeight="Black" LetterSpacing="1.2" Foreground="#71717A"/>
-                                        <TextBlock Text="3840 × 2160 PX" FontSize="15" FontWeight="Black" Foreground="White" FontFamily="monospace" Margin="0,1,0,0"/>
-                                    </StackPanel>
-                                    
-                                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,2,0,0">
-                                        <TextBlock Text="HEX:" FontSize="7.5" FontWeight="Bold" Foreground="#444449" VerticalAlignment="Center"/>
-                                        <TextBlock Text="{Binding HexColorString}" FontSize="10.5" FontWeight="Bold" Foreground="#A1A1AA" FontFamily="monospace" VerticalAlignment="Center"/>
-                                        <TextBlock Text="• LOSSLESS PNG" FontSize="7" FontWeight="Black" Foreground="#52525B" VerticalAlignment="Center"/>
+                                    <!-- PC Specs -->
+                                    <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,1,0,0" IsVisible="{Binding IsSolidFormatPc}">
+                                        <TextBlock Text="DESKTOP 4K" FontSize="7.5" FontWeight="Black" Foreground="White"/>
+                                        <TextBlock Text="•  3840 × 2160 PX" FontSize="7.5" FontWeight="Bold" Foreground="#71717A" FontFamily="monospace"/>
+                                        <TextBlock Text="•" FontSize="8" Foreground="#27272A"/>
+                                        <TextBlock Text="{Binding OledSavingText}" FontSize="7.5" FontWeight="Bold" Foreground="#A1A1AA" FontFamily="monospace"/>
                                     </StackPanel>
                                 </StackPanel>
 
-                                <!-- SELECTOR SEGMENTED MULTIDISPOSITIVO (PC | CELULAR) -->
-                                <Border Grid.Column="2"
-                                        Background="#1C1C1E"
+                                <!-- PC / CELULAR Segmented Selector -->
+                                <Border Grid.Column="1"
+                                        Background="#111113"
                                         Padding="2"
                                         CornerRadius="6"
                                         VerticalAlignment="Center">
                                     <StackPanel Orientation="Horizontal" Spacing="2">
                                         <ToggleButton Content="CEL"
-                                                      IsChecked="{Binding IsSolidFormatMobile, Mode=OneWay}"
-                                                      Command="{Binding SwitchSolidFormatCommand}"
-                                                      CommandParameter="Móvil"
-                                                      Height="24"
-                                                      Width="38"
-                                                      CornerRadius="4"
-                                                      FontSize="8"
-                                                      FontWeight="Black"
-                                                      HorizontalAlignment="Stretch"
-                                                      HorizontalContentAlignment="Center"
-                                                      VerticalContentAlignment="Center"
-                                                      BorderThickness="0">
+                                                       IsChecked="{Binding IsSolidFormatMobile, Mode=OneWay}"
+                                                       Command="{Binding SwitchSolidFormatCommand}"
+                                                       CommandParameter="Móvil"
+                                                       Height="20"
+                                                       Width="32"
+                                                       CornerRadius="4"
+                                                       FontSize="7.5"
+                                                       FontWeight="Black"
+                                                       HorizontalAlignment="Stretch"
+                                                       HorizontalContentAlignment="Center"
+                                                       VerticalContentAlignment="Center"
+                                                       BorderThickness="0">
                                             <ToggleButton.Styles>
                                                 <Style Selector="ToggleButton:checked /template/ ContentPresenter">
                                                     <Setter Property="Background" Value="White"/>
@@ -564,23 +748,23 @@
                                                 </Style>
                                                 <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
                                                     <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                    <Setter Property="Foreground" Value="#505050"/>
                                                 </Style>
                                             </ToggleButton.Styles>
                                         </ToggleButton>
                                         <ToggleButton Content="PC"
-                                                      IsChecked="{Binding IsSolidFormatPc, Mode=OneWay}"
-                                                      Command="{Binding SwitchSolidFormatCommand}"
-                                                      CommandParameter="PC"
-                                                      Height="24"
-                                                      Width="38"
-                                                      CornerRadius="4"
-                                                      FontSize="8"
-                                                      FontWeight="Black"
-                                                      HorizontalAlignment="Stretch"
-                                                      HorizontalContentAlignment="Center"
-                                                      VerticalContentAlignment="Center"
-                                                      BorderThickness="0">
+                                                       IsChecked="{Binding IsSolidFormatPc, Mode=OneWay}"
+                                                       Command="{Binding SwitchSolidFormatCommand}"
+                                                       CommandParameter="PC"
+                                                       Height="20"
+                                                       Width="32"
+                                                       CornerRadius="4"
+                                                       FontSize="7.5"
+                                                       FontWeight="Black"
+                                                       HorizontalAlignment="Stretch"
+                                                       HorizontalContentAlignment="Center"
+                                                       VerticalContentAlignment="Center"
+                                                       BorderThickness="0">
                                             <ToggleButton.Styles>
                                                 <Style Selector="ToggleButton:checked /template/ ContentPresenter">
                                                     <Setter Property="Background" Value="White"/>
@@ -588,7 +772,7 @@
                                                 </Style>
                                                 <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
                                                     <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                    <Setter Property="Foreground" Value="#505050"/>
                                                 </Style>
                                             </ToggleButton.Styles>
                                         </ToggleButton>
@@ -596,94 +780,23 @@
                                 </Border>
                             </Grid>
 
-                            <!-- TACTILE GRAIN SELECTOR SEGMENTED CONTROL -->
-                            <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10" VerticalAlignment="Center">
-                                <TextBlock Grid.Column="0" Text="RUIDO TÁCTIL (PAPER)" FontSize="7.5" FontWeight="Black" LetterSpacing="1.2" Foreground="#71717A" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                <Border Grid.Column="1" Background="#1C1C1E" Padding="2" CornerRadius="6" HorizontalAlignment="Right" VerticalAlignment="Center">
-                                    <StackPanel Orientation="Horizontal" Spacing="2">
-                                        <ToggleButton Content="SIN RUIDO"
-                                                      IsChecked="{Binding IsGrainNone, Mode=OneWay}"
-                                                      Command="{Binding SwitchGrainLevelCommand}"
-                                                      CommandParameter="0"
-                                                      Height="20"
-                                                      Padding="6,0"
-                                                      CornerRadius="4"
-                                                      FontSize="7.5"
-                                                      FontWeight="Black"
-                                                      BorderThickness="0">
-                                            <ToggleButton.Styles>
-                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="White"/>
-                                                    <Setter Property="Foreground" Value="Black"/>
-                                                </Style>
-                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Foreground" Value="#707070"/>
-                                                </Style>
-                                            </ToggleButton.Styles>
-                                        </ToggleButton>
-                                        <ToggleButton Content="FINO"
-                                                      IsChecked="{Binding IsGrainFine, Mode=OneWay}"
-                                                      Command="{Binding SwitchGrainLevelCommand}"
-                                                      CommandParameter="1"
-                                                      Height="20"
-                                                      Padding="6,0"
-                                                      CornerRadius="4"
-                                                      FontSize="7.5"
-                                                      FontWeight="Black"
-                                                      BorderThickness="0">
-                                            <ToggleButton.Styles>
-                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="White"/>
-                                                    <Setter Property="Foreground" Value="Black"/>
-                                                </Style>
-                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Foreground" Value="#707070"/>
-                                                </Style>
-                                            </ToggleButton.Styles>
-                                        </ToggleButton>
-                                        <ToggleButton Content="TÁCTIL"
-                                                      IsChecked="{Binding IsGrainTactile, Mode=OneWay}"
-                                                      Command="{Binding SwitchGrainLevelCommand}"
-                                                      CommandParameter="2"
-                                                      Height="20"
-                                                      Padding="6,0"
-                                                      CornerRadius="4"
-                                                      FontSize="7.5"
-                                                      FontWeight="Black"
-                                                      BorderThickness="0">
-                                            <ToggleButton.Styles>
-                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="White"/>
-                                                    <Setter Property="Foreground" Value="Black"/>
-                                                </Style>
-                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Setter Property="Foreground" Value="#707070"/>
-                                                </Style>
-                                            </ToggleButton.Styles>
-                                        </ToggleButton>
-                                    </StackPanel>
-                                </Border>
-                            </Grid>
-
-                            <!-- Botón de descarga limpio de iconos -->
+                            <!-- Botón de descarga limpio y brutalista -->
                             <Button Command="{Binding DownloadSolidColorCommand}"
                                     Background="White"
                                     Foreground="Black"
-                                    Height="45"
-                                    CornerRadius="8"
+                                    Height="40"
+                                    CornerRadius="6"
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center">
+                                    VerticalContentAlignment="Center"
+                                    Margin="0,4,0,0">
                                 <Button.Styles>
                                     <Style Selector="Button:pointerover /template/ ContentPresenter">
                                         <Setter Property="Background" Value="#E0E0E0"/>
                                         <Setter Property="Foreground" Value="Black"/>
                                     </Style>
                                 </Button.Styles>
-                                <TextBlock Text="GENERAR WALLPAPER SÓLIDO" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                                <TextBlock Text="GENERAR WALLPAPER SÓLIDO" FontSize="10.5" FontWeight="Bold" LetterSpacing="1"/>
                             </Button>
                         </StackPanel>
                     </Border>
@@ -811,7 +924,7 @@
                         </ItemsControl>
                     </StackPanel>
 
-                    <Grid ColumnDefinitions="*,Auto,Auto">
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto">
                         <!-- BOTÓN DESCARGAR -->
                         <Button Grid.Column="0"
                                 Command="{Binding DownloadCommand}"
@@ -847,7 +960,8 @@
                                       Margin="0,0,8,0"
                                       Background="#121212"
                                       BorderBrush="#1C1C1E"
-                                      BorderThickness="1">
+                                      BorderThickness="1"
+                                      ToolTip.Tip="AÑADIR A FAVORITOS">
                             <ToggleButton.Styles>
                                 <Style Selector="ToggleButton:checked /template/ ContentPresenter">
                                     <Setter Property="Background" Value="White"/>
@@ -863,8 +977,34 @@
                             <TextBlock Text="❤" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </ToggleButton>
 
+                        <!-- Toggle de simulador lockscreen (📱) -->
+                        <ToggleButton Grid.Column="2"
+                                      IsChecked="{Binding IsLockScreenOverlayVisible, Mode=TwoWay}"
+                                      Width="45"
+                                      Height="45"
+                                      CornerRadius="8"
+                                      Margin="0,0,8,0"
+                                      Background="#121212"
+                                      BorderBrush="#1C1C1E"
+                                      BorderThickness="1"
+                                      ToolTip.Tip="SIMULAR PANTALLA DE BLOQUEO iOS">
+                            <ToggleButton.Styles>
+                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#121212"/>
+                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </ToggleButton.Styles>
+                            <TextBlock Text="📱" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+
                         <!-- Botón cerrar -->
-                        <Button Grid.Column="2"
+                        <Button Grid.Column="3"
                                 Command="{Binding ClosePreviewCommand}"
                                 Content="CERRAR"
                                 Background="#121212"
@@ -874,7 +1014,7 @@
                                 FontWeight="Bold"
                                 FontSize="11"
                                 LetterSpacing="0.5"
-                                Width="85"
+                                Width="80"
                                 Height="45"
                                 CornerRadius="8"
                                 HorizontalContentAlignment="Center"

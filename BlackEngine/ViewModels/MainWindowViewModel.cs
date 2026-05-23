@@ -117,7 +117,6 @@ public class MainWindowViewModel : INotifyPropertyChanged
         }
     }
 
-    // Rueda de Color 3D e Indicador de Color Sólido
     private Color _selectedSolidColor = Color.Parse("#FFFFFF");
     public Color SelectedSolidColor
     {
@@ -129,11 +128,26 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged(nameof(HexColorString));
             OnPropertyChanged(nameof(SelectedSolidColorBrush));
             OnPropertyChanged(nameof(OledSavingText));
+            OnPropertyChanged(nameof(ContrastRatioText));
+            
+            // Sincronizar el input de texto hexadecimal con el nuevo color (sin hashtag para entrada limpia)
+            _customHexInput = $"{value.R:X2}{value.G:X2}{value.B:X2}";
+            OnPropertyChanged(nameof(CustomHexInput));
+            
+            // Notificar paleta de contrastes complementarios
+            OnPropertyChanged(nameof(ComplementaryHexColorString));
+            OnPropertyChanged(nameof(ComplementarySolidColorBrush));
+
+            UpdateLightnessField();
         }
     }
 
     public string HexColorString => $"#{SelectedSolidColor.R:X2}{SelectedSolidColor.G:X2}{SelectedSolidColor.B:X2}";
     public SolidColorBrush SelectedSolidColorBrush => new(SelectedSolidColor);
+
+    // Paleta de Contraste Complementario Automático del Diseñador
+    public string ComplementaryHexColorString => $"#{(255 - SelectedSolidColor.R):X2}{(255 - SelectedSolidColor.G):X2}{(255 - SelectedSolidColor.B):X2}";
+    public SolidColorBrush ComplementarySolidColorBrush => new(Color.Parse(ComplementaryHexColorString));
 
     // Vista previa de lockscreen simulation overlay
     private bool _isLockScreenOverlayVisible;
@@ -182,6 +196,58 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     // Catalog elements count indicator
     public string CatalogCountText => $"{Wallpapers.Count} OBRAS FILTRADAS";
+
+    // Calibración de Brillo (HSL Lightness, Rango 0-100)
+    private double _lightness = 50.0;
+    public double Lightness
+    {
+        get => _lightness;
+        set
+        {
+            if (Math.Abs(_lightness - value) > 0.01)
+            {
+                _lightness = value;
+                OnPropertyChanged();
+                UpdateColorFromHsl();
+            }
+        }
+    }
+
+    // Input Hexadecimal Custom del Diseñador
+    private string _customHexInput = string.Empty;
+    public string CustomHexInput
+    {
+        get => _customHexInput;
+        set
+        {
+            _customHexInput = value;
+            OnPropertyChanged();
+            TryApplyHex(value);
+        }
+    }
+
+    // Dynamic contrast ratio checker (WCAG standard)
+    public string ContrastRatioText
+    {
+        get
+        {
+            double r = SelectedSolidColor.R / 255.0;
+            double g = SelectedSolidColor.G / 255.0;
+            double b = SelectedSolidColor.B / 255.0;
+
+            double rl = 0.2126 * (r <= 0.03928 ? r / 12.92 : Math.Pow((r + 0.055) / 1.055, 2.4)) +
+                        0.7152 * (g <= 0.03928 ? g / 12.92 : Math.Pow((g + 0.055) / 1.055, 2.4)) +
+                        0.0722 * (b <= 0.03928 ? b / 12.92 : Math.Pow((b + 0.055) / 1.055, 2.4));
+
+            double contrastWhite = (1.0 + 0.05) / (rl + 0.05);
+            double contrastBlack = (rl + 0.05) / 0.05;
+
+            string whiteLevel = contrastWhite >= 7.0 ? "AAA" : (contrastWhite >= 4.5 ? "AA" : "FAIL");
+            string blackLevel = contrastBlack >= 7.0 ? "AAA" : (contrastBlack >= 4.5 ? "AA" : "FAIL");
+
+            return $"WHITE: {contrastWhite:F1}:1 ({whiteLevel})  |  BLACK: {contrastBlack:F1}:1 ({blackLevel})";
+        }
+    }
 
     // Formato de Descarga del Color Sólido: PC o Móvil
     private string _solidColorFormat = "Móvil"; // Celular por defecto
@@ -442,6 +508,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public ICommand CopyLinkCommand { get; }
     public ICommand SwitchGrainLevelCommand { get; }
     public ICommand ToggleLockScreenOverlayCommand { get; }
+    public ICommand CopyCodeCommand { get; }
 
     public MainWindowViewModel()
     {
@@ -469,6 +536,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         CopyLinkCommand = new RelayCommand<Wallpaper>(CopyLink);
         SwitchGrainLevelCommand = new RelayCommand<string>(lvl => GrainLevel = double.TryParse(lvl, out var res) ? res : 0.0);
         ToggleLockScreenOverlayCommand = new RelayCommand<object>(_ => IsLockScreenOverlayVisible = !IsLockScreenOverlayVisible);
+        CopyCodeCommand = new RelayCommand<string>(CopyCode);
 
         // Inicializar Carpeta de Destino
         var defaultFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "BlackEngine");
@@ -1085,6 +1153,128 @@ public class MainWindowViewModel : INotifyPropertyChanged
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    // COMANDO PARA COPIAR CÓDIGO DE COLOR (SWIFTUI, KOTLIN, CSS, HEX)
+    private void CopyCode(string? format)
+    {
+        if (format == null) return;
+        try
+        {
+            var hex = HexColorString;
+            var r = SelectedSolidColor.R;
+            var g = SelectedSolidColor.G;
+            var b = SelectedSolidColor.B;
+            
+            var textToCopy = format.ToUpper() switch
+            {
+                "SWIFT" => $"Color(red: {r/255.0:F2}, green: {g/255.0:F2}, blue: {b/255.0:F2})",
+                "KOTLIN" => $"Color(0xFF{r:X2}{g:X2}{b:X2})",
+                "CSS" => $"background-color: {hex};",
+                _ => hex
+            };
+
+            var mainWindow = (App.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            if (mainWindow?.Clipboard != null)
+            {
+                _ = mainWindow.Clipboard.SetTextAsync(textToCopy);
+                ShowToast($"¡Código {format} copiado: {textToCopy}!");
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowToast($"Error al copiar: {ex.Message}");
+        }
+    }
+
+    private void TryApplyHex(string hex)
+    {
+        if (string.IsNullOrWhiteSpace(hex)) return;
+        var cleanHex = hex.Trim();
+        if (!cleanHex.StartsWith("#"))
+        {
+            cleanHex = "#" + cleanHex;
+        }
+
+        try
+        {
+            if (Color.TryParse(cleanHex, out var parsedColor))
+            {
+                _selectedSolidColor = parsedColor;
+                OnPropertyChanged(nameof(SelectedSolidColor));
+                OnPropertyChanged(nameof(HexColorString));
+                OnPropertyChanged(nameof(SelectedSolidColorBrush));
+                OnPropertyChanged(nameof(OledSavingText));
+                OnPropertyChanged(nameof(ContrastRatioText));
+                OnPropertyChanged(nameof(ComplementaryHexColorString));
+                OnPropertyChanged(nameof(ComplementarySolidColorBrush));
+                UpdateLightnessField();
+            }
+        }
+        catch
+        {
+            // Ignorar errores al escribir
+        }
+    }
+
+    private void UpdateLightnessField()
+    {
+        double r = SelectedSolidColor.R / 255.0;
+        double g = SelectedSolidColor.G / 255.0;
+        double b = SelectedSolidColor.B / 255.0;
+        double max = Math.Max(r, Math.Max(g, b));
+        double min = Math.Min(r, Math.Min(g, b));
+        _lightness = ((max + min) / 2.0) * 100.0;
+        OnPropertyChanged(nameof(Lightness));
+    }
+
+    private void UpdateColorFromHsl()
+    {
+        double r = SelectedSolidColor.R / 255.0;
+        double g = SelectedSolidColor.G / 255.0;
+        double b = SelectedSolidColor.B / 255.0;
+        double max = Math.Max(r, Math.Max(g, b));
+        double min = Math.Min(r, Math.Min(g, b));
+        
+        double h = 0;
+        double s = 0;
+        double l = (max + min) / 2.0;
+
+        if (max != min)
+        {
+            double d = max - min;
+            s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
+            if (max == r)
+            {
+                h = (g - b) / d + (g < b ? 6 : 0);
+            }
+            else if (max == g)
+            {
+                h = (b - r) / d + 2;
+            }
+            else if (max == b)
+            {
+                h = (r - g) / d + 4;
+            }
+            h /= 6.0;
+        }
+
+        var newL = Lightness / 100.0;
+        var newColor = HslToRgb(h * 360.0, s, newL);
+        
+        _selectedSolidColor = newColor;
+        
+        // Sincronizar el input de texto hexadecimal con el nuevo color del slider
+        _customHexInput = $"{newColor.R:X2}{newColor.G:X2}{newColor.B:X2}";
+        OnPropertyChanged(nameof(CustomHexInput));
+
+        OnPropertyChanged(nameof(SelectedSolidColor));
+        OnPropertyChanged(nameof(HexColorString));
+        OnPropertyChanged(nameof(SelectedSolidColorBrush));
+        OnPropertyChanged(nameof(OledSavingText));
+        OnPropertyChanged(nameof(ContrastRatioText));
+        OnPropertyChanged(nameof(ComplementaryHexColorString));
+        OnPropertyChanged(nameof(ComplementarySolidColorBrush));
     }
 }
 

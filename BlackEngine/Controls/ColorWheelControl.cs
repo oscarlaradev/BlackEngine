@@ -23,6 +23,22 @@ public class ColorWheelControl : Control
         set => SetValue(SelectedColorProperty, value);
     }
 
+    static ColorWheelControl()
+    {
+        SelectedColorProperty.Changed.AddClassHandler<ColorWheelControl>((control, args) =>
+        {
+            control.OnSelectedColorChanged(args);
+        });
+    }
+
+    private void OnSelectedColorChanged(AvaloniaPropertyChangedEventArgs args)
+    {
+        if (args.NewValue is Color newColor)
+        {
+            RotateColorToCenter(newColor);
+        }
+    }
+
     private struct SpherePoint
     {
         public double X;
@@ -35,6 +51,10 @@ public class ColorWheelControl : Control
     private double _rx = 0.5; // Ángulo Pitch inicial
     private double _ry = 0.5; // Ángulo Yaw inicial
     
+    private double _targetRx = 0.5;
+    private double _targetRy = 0.5;
+    private bool _isAnimating;
+
     private Point _lastMousePos;
     private bool _isDragging;
 
@@ -42,6 +62,46 @@ public class ColorWheelControl : Control
     {
         ClipToBounds = false;
         GenerateSpherePoints();
+    }
+
+    private SpherePoint? FindClosestPoint(Color targetColor)
+    {
+        double minDistance = double.MaxValue;
+        SpherePoint? bestPoint = null;
+        foreach (var p in _points)
+        {
+            double dr = p.Color.R - targetColor.R;
+            double dg = p.Color.G - targetColor.G;
+            double db = p.Color.B - targetColor.B;
+            double distance = dr * dr + dg * dg + db * db;
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                bestPoint = p;
+            }
+        }
+        return bestPoint;
+    }
+
+    private void RotateColorToCenter(Color color)
+    {
+        if (_isDragging || _points.Count == 0) return;
+
+        var point = FindClosestPoint(color);
+        if (point.HasValue)
+        {
+            var p = point.Value;
+            
+            // Calcular los ángulos exactos de rotación para posicionar el punto en (0, 0, 1) frente al espectador
+            _targetRy = Math.Atan2(p.X, p.Z);
+            _targetRx = Math.Atan2(p.Y, Math.Sqrt(p.X * p.X + p.Z * p.Z));
+
+            // Limitar Pitch para coherencia visual
+            _targetRx = Math.Clamp(_targetRx, -Math.PI / 2.0 + 0.1, Math.PI / 2.0 - 0.1);
+
+            _isAnimating = true;
+            InvalidateVisual();
+        }
     }
 
     private void GenerateSpherePoints()
@@ -129,6 +189,11 @@ public class ColorWheelControl : Control
             // Limitar el cabeceo (Pitch) para evitar giros imposibles
             _rx = Math.Clamp(_rx, -Math.PI / 2.0 + 0.1, Math.PI / 2.0 - 0.1);
 
+            // Sincronizar objetivos de interpolación para evitar saltos bruscos
+            _targetRx = _rx;
+            _targetRy = _ry;
+            _isAnimating = false;
+
             _lastMousePos = currentPos;
             InvalidateVisual(); // Redibujar a 60 FPS
         }
@@ -199,6 +264,27 @@ public class ColorWheelControl : Control
     public override void Render(DrawingContext context)
     {
         base.Render(context);
+
+        if (_isAnimating)
+        {
+            // Interpolación suavizada hacia los ángulos del color objetivo
+            double ease = 0.12;
+            _rx += (_targetRx - _rx) * ease;
+            _ry += (_targetRy - _ry) * ease;
+
+            // Verificar proximidad para detener la animación
+            if (Math.Abs(_rx - _targetRx) < 0.001 && Math.Abs(_ry - _targetRy) < 0.001)
+            {
+                _rx = _targetRx;
+                _ry = _targetRy;
+                _isAnimating = false;
+            }
+            else
+            {
+                // Agendar redibujado en el siguiente frame de composición
+                Avalonia.Threading.Dispatcher.UIThread.Post(InvalidateVisual, Avalonia.Threading.DispatcherPriority.Render);
+            }
+        }
 
         double width = Bounds.Width;
         double height = Bounds.Height;
