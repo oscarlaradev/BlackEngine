@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="BlackEngine/Assets/logo.png" alt="BlackEngine Logo" width="100"/>
+<img src="BlackEngine/Assets/icon.png" alt="BlackEngine Logo" width="100"/>
 
 # BLACK ENGINE
 
