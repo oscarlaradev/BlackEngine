@@ -23,17 +23,37 @@
         <!-- CONTENIDO PRINCIPAL -->
         <Grid RowDefinitions="Auto,*" Margin="20,50,20,15">
 
-            <!-- CABECERA ULTRA-FINA: TÍTULO, PESTAÑAS Y ICONO AJUSTES -->
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,15">
+            <!-- CABECERA ULTRA-FINA: LOGO BRUTALISTA, PESTAÑAS Y ICONO AJUSTES -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,18">
                 
-                <!-- TÍTULO MINIMALISTA -->
-                <TextBlock Grid.Column="0"
-                           Text="BLACKENGINE"
-                           FontSize="10"
-                           FontWeight="Black"
-                           LetterSpacing="3"
-                           Foreground="White"
-                           VerticalAlignment="Center"/>
+                <!-- LOGO BRUTALISTA DE BLACKENGINE -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <!-- Icono de doble rombo rotado minimalista superpuesto -->
+                    <Grid Width="16" Height="16" VerticalAlignment="Center">
+                        <!-- Rombo de acento oscuro de fondo -->
+                        <Border Width="9" Height="9" BorderBrush="#404040" BorderThickness="1" CornerRadius="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <Border.RenderTransform>
+                                <RotateTransform Angle="45"/>
+                            </Border.RenderTransform>
+                        </Border>
+                        <!-- Rombo de luz frontal -->
+                        <Border Width="9" Height="9" Background="White" BorderBrush="White" BorderThickness="1" CornerRadius="1.5" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Border.RenderTransform>
+                                <RotateTransform Angle="45"/>
+                            </Border.RenderTransform>
+                        </Border>
+                    </Grid>
+                    
+                    <!-- Logotipo Tipográfico Suizo -->
+                    <StackPanel Orientation="Vertical" Spacing="-2" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" Spacing="2">
+                            <TextBlock Text="B L A C K" FontSize="10.5" FontWeight="Light" Foreground="#8A8A8E" LetterSpacing="2" FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"/>
+                            <TextBlock Text="ENGINE" FontSize="10.5" FontWeight="Black" Foreground="White" LetterSpacing="2" FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"/>
+                            <TextBlock Text="™" FontSize="5" FontWeight="Black" Foreground="#55555A" VerticalAlignment="Top"/>
+                        </StackPanel>
+                        <TextBlock Text="C H R O M A T I C   S T U D I O" FontSize="5" FontWeight="Bold" LetterSpacing="1.5" Foreground="#55555A" Margin="1,0,0,0" FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"/>
+                    </StackPanel>
+                </StackPanel>
 
                 <!-- NAV TABS CENTRALES (GALERÍA & COLOR 3D) -->
                 <ListBox Grid.Column="1"
@@ -101,35 +121,37 @@
                     
                     <!-- BUSCADOR MINIMALISTA + SPOTLIGHT DIRECT SHORTCUT -->
                     <Border Grid.Row="0"
-                            Background="#121212"
-                            BorderBrush="#1C1C1E"
+                            Background="#09090B"
+                            BorderBrush="#18181B"
                             BorderThickness="1"
                             CornerRadius="8"
-                            Padding="12,4"
-                            Margin="0,0,0,8">
+                            Padding="12,3"
+                            Margin="0,0,0,10">
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="BUSCAR"
-                                       Foreground="#505050"
-                                       FontSize="9"
-                                       FontWeight="Bold"
-                                       LetterSpacing="1"
+                                       Text="⚲ SEARCH"
+                                       Foreground="#52525B"
+                                       FontSize="8"
+                                       FontWeight="Black"
+                                       LetterSpacing="1.5"
                                        VerticalAlignment="Center"
-                                       Margin="0,0,12,0"/>
+                                       Margin="0,0,14,0"
+                                       FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"/>
                             <TextBox Grid.Column="1"
-                                     PlaceholderText="Buscar obras o autores..."
+                                     PlaceholderText="Buscar obras, autores o categorías..."
                                      Text="{Binding SearchText, Mode=TwoWay}"
                                      Background="Transparent"
                                      BorderThickness="0"
                                      Foreground="White"
-                                     FontSize="13"
+                                     FontSize="12"
                                      Padding="0,6"
-                                     VerticalAlignment="Center"/>
+                                     VerticalAlignment="Center"
+                                     FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"/>
                             
                             <Button Grid.Column="2"
                                     Command="{Binding ToggleSpotlightCommand}"
-                                    Background="#1C1C1E"
-                                    BorderBrush="#252528"
+                                    Background="#18181B"
+                                    BorderBrush="#27272A"
                                     BorderThickness="1"
                                     Padding="8,4"
                                     CornerRadius="4"
@@ -140,9 +162,9 @@
                     </Border>
 
                     <!-- CHIPS DE FILTRO DISPOSITIVO (TODOS, PC, CELULAR) -->
-                    <Border Grid.Row="1" BorderBrush="#1C1C1E" BorderThickness="0,0,0,1" Padding="0,0,0,8" Margin="0,0,0,8">
+                    <Border Grid.Row="1" BorderBrush="#18181B" BorderThickness="0,0,0,1" Padding="0,0,0,8" Margin="0,0,0,10">
                         <Grid ColumnDefinitions="Auto,*">
-                            <TextBlock Grid.Column="0" Text="EQUIPO" FontSize="8" FontWeight="Black" LetterSpacing="1" Foreground="#505050" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <TextBlock Grid.Column="0" Text="DEVICE" FontSize="7.5" FontWeight="Black" LetterSpacing="2" Foreground="#52525B" VerticalAlignment="Center" Margin="0,0,15,0" FontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif"/>
                             <ListBox Grid.Column="1"
                                      ItemsSource="{Binding DeviceFilters}"
                                      SelectedItem="{Binding SelectedDeviceFilter, Mode=TwoWay}"
@@ -151,23 +173,30 @@
                                      Padding="0">
                                 <ListBox.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="6"/>
+                                        <StackPanel Orientation="Horizontal" Spacing="8"/>
                                     </ItemsPanelTemplate>
                                 </ListBox.ItemsPanel>
                                 <ListBox.Styles>
                                     <Style Selector="ListBoxItem">
                                         <Setter Property="Padding" Value="10,4"/>
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Setter Property="Foreground" Value="#505050"/>
-                                        <Setter Property="FontSize" Value="9"/>
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
-                                        <Setter Property="CornerRadius" Value="4"/>
+                                        <Setter Property="Background" Value="#09090B"/>
+                                        <Setter Property="Foreground" Value="#71717A"/>
+                                        <Setter Property="FontSize" Value="8.5"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="CornerRadius" Value="6"/>
                                         <Setter Property="BorderThickness" Value="1"/>
-                                        <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                        <Setter Property="BorderBrush" Value="#18181B"/>
+                                        <Setter Property="Transitions">
+                                            <Transitions>
+                                                <BrushTransition Property="Background" Duration="0:0:0.12"/>
+                                                <BrushTransition Property="Foreground" Duration="0:0:0.12"/>
+                                            </Transitions>
+                                        </Setter>
                                     </Style>
                                     <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="#1C1C1E"/>
+                                        <Setter Property="Background" Value="#18181B"/>
                                         <Setter Property="Foreground" Value="White"/>
+                                        <Setter Property="BorderBrush" Value="#27272A"/>
                                     </Style>
                                     <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
                                         <Setter Property="Background" Value="White"/>
@@ -183,7 +212,7 @@
                     <ScrollViewer Grid.Row="2"
                                   HorizontalScrollBarVisibility="Hidden"
                                   VerticalScrollBarVisibility="Disabled"
-                                  Margin="0,0,0,10">
+                                  Margin="0,0,0,12">
                         <ListBox ItemsSource="{Binding Categories}"
                                  SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
                                  Background="Transparent"
@@ -196,19 +225,25 @@
                             </ListBox.ItemsPanel>
                             <ListBox.Styles>
                                 <Style Selector="ListBoxItem">
-                                    <Setter Property="Padding" Value="12,6"/>
-                                    <Setter Property="Background" Value="#121212"/>
-                                    <Setter Property="Foreground" Value="#707070"/>
-                                    <Setter Property="FontSize" Value="9"/>
-                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="Padding" Value="12,5"/>
+                                    <Setter Property="Background" Value="#09090B"/>
+                                    <Setter Property="Foreground" Value="#71717A"/>
+                                    <Setter Property="FontSize" Value="8.5"/>
+                                    <Setter Property="FontWeight" Value="Bold"/>
                                     <Setter Property="CornerRadius" Value="6"/>
                                     <Setter Property="BorderThickness" Value="1"/>
-                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    <Setter Property="BorderBrush" Value="#18181B"/>
+                                    <Setter Property="Transitions">
+                                        <Transitions>
+                                            <BrushTransition Property="Background" Duration="0:0:0.12"/>
+                                            <BrushTransition Property="Foreground" Duration="0:0:0.12"/>
+                                        </Transitions>
+                                    </Setter>
                                 </Style>
                                 <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#1C1C1E"/>
+                                    <Setter Property="Background" Value="#18181B"/>
                                     <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="BorderBrush" Value="#252528"/>
+                                    <Setter Property="BorderBrush" Value="#27272A"/>
                                 </Style>
                                 <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
                                     <Setter Property="Background" Value="White"/>
@@ -223,15 +258,22 @@
                     <StackPanel Grid.Row="3"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Spacing="12"
-                                IsVisible="{Binding !Wallpapers.Count}">
-                        <TextBlock Text="·" FontSize="36" Foreground="#505050" HorizontalAlignment="Center"/>
-                        <TextBlock Text="GALERÍA VACÍA" FontSize="9" FontWeight="Black" LetterSpacing="2" Foreground="#707070" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Usa ⚙ -> GITHUB CLOUD ENGINE para sincronizar obras reales."
-                                   FontSize="10"
-                                   Foreground="#505050"
-                                   HorizontalAlignment="Center"
-                                   TextAlignment="Center"/>
+                                Spacing="16"
+                                IsVisible="{Binding !Wallpapers.Count}"
+                                Margin="0,80,0,80">
+                        <Grid Width="24" Height="24" HorizontalAlignment="Center">
+                            <Ellipse Width="8" Height="8" Fill="#71717A" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Ellipse Width="24" Height="24" Stroke="#27272A" StrokeThickness="1" StrokeDashArray="3,3"/>
+                        </Grid>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="GALERÍA SIN CONTENIDO" FontSize="9" FontWeight="Black" LetterSpacing="2" Foreground="#8A8A8E" HorizontalAlignment="Center" FontFamily="Inter, -apple-system, sans-serif"/>
+                            <TextBlock Text="Conecta tu GITHUB CLOUD ENGINE en el menú de ajustes ⚙"
+                                       FontSize="10"
+                                       Foreground="#52525B"
+                                       HorizontalAlignment="Center"
+                                       TextAlignment="Center"
+                                       FontFamily="Inter, -apple-system, sans-serif"/>
+                        </StackPanel>
                     </StackPanel>
 
                     <!-- GRILLA DE IMÁGENES -->
@@ -253,6 +295,9 @@
                             <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
                                 <Setter Property="Background" Value="Transparent"/>
                             </Style>
+                            <Style Selector="ListBoxItem:pointerover Border.WpCard">
+                                <Setter Property="BorderBrush" Value="#444449"/>
+                            </Style>
                         </ListBox.Styles>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -261,12 +306,13 @@
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Border Height="285"
-                                        Margin="5"
-                                        CornerRadius="12"
+                                <Border Classes="WpCard"
+                                        Height="285"
+                                        Margin="6"
+                                        CornerRadius="14"
                                         ClipToBounds="True"
-                                        Background="#121212"
-                                        BorderBrush="#1C1C1E"
+                                        Background="#09090B"
+                                        BorderBrush="#18181B"
                                         BorderThickness="1">
                                     <Grid>
                                         <!-- CLIC EN IMAGEN -->
@@ -394,16 +440,36 @@
                                    HorizontalAlignment="Center"/>
                     </StackPanel>
 
-                    <!-- CONTENEDOR CENTRAL DE LA RUEDA 3D -->
+                    <!-- CONTENEDOR CENTRAL DE LA RUEDA 3D CON BRÚJULA TÉCNICA -->
                     <Border Grid.Row="1"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Width="330"
                             Height="330"
                             Background="Transparent">
-                        <controls:ColorWheelControl SelectedColor="{Binding SelectedSolidColor, Mode=TwoWay}"
-                                                   HorizontalAlignment="Stretch"
-                                                   VerticalAlignment="Stretch"/>
+                        <!-- TECHNICAL COMPASS CONCENTRIC GRID -->
+                        <Grid Width="330" Height="330" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                            <!-- Concentric thin circles -->
+                            <Ellipse Width="330" Height="330" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                            <Ellipse Width="260" Height="260" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                            <Ellipse Width="190" Height="190" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                            <Ellipse Width="120" Height="120" Stroke="#151518" StrokeThickness="1" StrokeDashArray="3,3"/>
+                            
+                            <!-- Technical Crosshair axes -->
+                            <Line StartPoint="165,0" EndPoint="165,330" Stroke="#151518" StrokeThickness="1" StrokeDashArray="4,4"/>
+                            <Line StartPoint="0,165" EndPoint="330,165" Stroke="#151518" StrokeThickness="1" StrokeDashArray="4,4"/>
+                            
+                            <!-- Precise Angle HUD Labels -->
+                            <TextBlock Text="N  0°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,0,0" FontFamily="monospace"/>
+                            <TextBlock Text="E  90°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0" FontFamily="monospace"/>
+                            <TextBlock Text="S  180°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,5" FontFamily="monospace"/>
+                            <TextBlock Text="W  270°" FontSize="6.5" FontWeight="Black" Foreground="#444449" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" FontFamily="monospace"/>
+                            
+                            <!-- Actual 3D sphere component -->
+                            <controls:ColorWheelControl SelectedColor="{Binding SelectedSolidColor, Mode=TwoWay}"
+                                                       HorizontalAlignment="Stretch"
+                                                       VerticalAlignment="Stretch"/>
+                        </Grid>
                     </Border>
 
                     <!-- CONTROLES HUD DEL COLOR SELECCIONADO -->
@@ -427,17 +493,21 @@
                                         BorderThickness="1"/>
                                 
                                 <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
-                                    <TextBlock Text="COLOR SÓLIDO SELECCIONADO"
-                                               FontSize="8"
-                                               FontWeight="Bold"
-                                               LetterSpacing="1.5"
-                                               Foreground="#707070"/>
-                                    <TextBlock Text="{Binding HexColorString}"
-                                               FontSize="18"
-                                               FontWeight="Light"
-                                               Foreground="White"
-                                               FontFamily="monospace"
-                                               Margin="0,2,0,0"/>
+                                    <!-- Dynamic Technical Specifications based on device selection -->
+                                    <StackPanel VerticalAlignment="Center" IsVisible="{Binding IsSolidFormatMobile}">
+                                        <TextBlock Text="TARGET: CELULAR (RATIO 9:20)" FontSize="7.5" FontWeight="Black" LetterSpacing="1.2" Foreground="#71717A"/>
+                                        <TextBlock Text="1440 × 3200 PX" FontSize="15" FontWeight="Black" Foreground="White" FontFamily="monospace" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                    <StackPanel VerticalAlignment="Center" IsVisible="{Binding IsSolidFormatPc}">
+                                        <TextBlock Text="TARGET: PC 4K (RATIO 16:9)" FontSize="7.5" FontWeight="Black" LetterSpacing="1.2" Foreground="#71717A"/>
+                                        <TextBlock Text="3840 × 2160 PX" FontSize="15" FontWeight="Black" Foreground="White" FontFamily="monospace" Margin="0,1,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,2,0,0">
+                                        <TextBlock Text="HEX:" FontSize="7.5" FontWeight="Bold" Foreground="#444449" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding HexColorString}" FontSize="10.5" FontWeight="Bold" Foreground="#A1A1AA" FontFamily="monospace" VerticalAlignment="Center"/>
+                                        <TextBlock Text="• LOSSLESS PNG" FontSize="7" FontWeight="Black" Foreground="#52525B" VerticalAlignment="Center"/>
+                                    </StackPanel>
                                 </StackPanel>
 
                                 <!-- SELECTOR SEGMENTED MULTIDISPOSITIVO (PC | CELULAR) -->
