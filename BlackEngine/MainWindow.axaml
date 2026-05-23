@@ -127,7 +127,7 @@
                             CornerRadius="8"
                             Padding="12,3"
                             Margin="0,0,0,12">
-                        <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
+                        <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto">
                             <TextBlock Grid.Column="0"
                                        Text="⚲ SEARCH"
                                        Foreground="#52525B"
@@ -270,7 +270,22 @@
                                 </Button.Flyout>
                             </Button>
                             
+                            <!-- BOTÓN MODO PRESENTACIÓN AMBIENT SLIDESHOW (📺) -->
                             <Button Grid.Column="4"
+                                    Command="{Binding ToggleSlideshowCommand}"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0"
+                                    Width="32"
+                                    Height="32"
+                                    CornerRadius="6"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,4,0"
+                                    ToolTip.Tip="INICIAR PRESENTACIÓN AMBIENTAL (📺)">
+                                <TextBlock Text="📺" FontSize="11" Foreground="#A1A1AA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Button>
+
+                            <Button Grid.Column="5"
                                     Command="{Binding ToggleSpotlightCommand}"
                                     Background="#18181B"
                                     BorderBrush="#27272A"
@@ -829,8 +844,113 @@
                                Stretch="Uniform"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"/>
+
+                        <!-- CUADRÍCULA DE COMPOSICIÓN TÉCNICA / REGLA DE TERCIOS (📐) -->
+                        <Grid IsVisible="{Binding IsCompositionGridVisible}"
+                              Background="Transparent"
+                              IsHitTestVisible="False"
+                              VerticalAlignment="Stretch"
+                              HorizontalAlignment="Stretch">
+                            <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*">
+                                <Border Grid.Row="0" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
+                                <Border Grid.Row="0" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
+                                <Border Grid.Row="0" Grid.Column="2" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.25"/>
+                                
+                                <Border Grid.Row="1" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
+                                <Border Grid.Row="1" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
+                                <Border Grid.Row="1" Grid.Column="2" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.25"/>
+                                
+                                <Border Grid.Row="2" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,1,0" Opacity="0.25"/>
+                                <Border Grid.Row="2" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,1,0" Opacity="0.25"/>
+                            </Grid>
+
+                            <!-- Visor Retículo Central Brutalista -->
+                            <Ellipse Width="30" Height="30" Stroke="White" StrokeThickness="1" StrokeDashArray="2,2" Opacity="0.4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Line StartPoint="-10,0" EndPoint="10,0" Stroke="White" StrokeThickness="1.5" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <Line StartPoint="0,-10" EndPoint="0,10" Stroke="White" StrokeThickness="1.5" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <!-- CAJÓN DE ESPECIFICACIONES TÉCNICAS BLUEPRINT (ⓘ) -->
+                        <Border HorizontalAlignment="Right"
+                                VerticalAlignment="Stretch"
+                                Width="260"
+                                Background="#F208080C"
+                                BorderBrush="#1C1C1E"
+                                BorderThickness="1,0,0,0"
+                                IsVisible="{Binding IsTechSpecsDrawerOpen}">
+                            <Grid RowDefinitions="Auto,*" Margin="20">
+                                <!-- Cabecera Blueprint -->
+                                <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+                                    <StackPanel Grid.Column="0" Spacing="4">
+                                        <TextBlock Text="TECHNICAL BLUEPRINT" FontSize="8" FontWeight="Black" LetterSpacing="2" Foreground="#8E8E93"/>
+                                        <TextBlock Text="Ficha Cromática" FontSize="14" FontWeight="Bold" Foreground="White"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1"
+                                            Command="{Binding ToggleTechSpecsDrawerCommand}"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Width="30"
+                                            Height="30"
+                                            CornerRadius="15">
+                                        <TextBlock Text="×" FontSize="16" Foreground="#8E8E93" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Button>
+                                </Grid>
+                                
+                                <!-- Contenido Specs -->
+                                <ScrollViewer Grid.Row="1">
+                                    <StackPanel Spacing="20">
+                                        <!-- Dimensión -->
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="DIMENSIONES DE LIENZO" FontSize="7.5" FontWeight="Black" LetterSpacing="1.5" Foreground="#52525B"/>
+                                            <Border Background="#121214" BorderBrush="#1C1C1E" BorderThickness="1" CornerRadius="6" Padding="12,10">
+                                                <StackPanel Spacing="3">
+                                                    <TextBlock Text="{Binding SelectedWpDimensions}" FontSize="12" FontWeight="Bold" Foreground="White" FontFamily="monospace"/>
+                                                    <TextBlock Text="Renderizado ultra-nítido sin pérdida" FontSize="8" Foreground="#606062"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                        
+                                        <!-- Perfil de Color -->
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="PERFIL DE COLOR &amp; FORMATO" FontSize="7.5" FontWeight="Black" LetterSpacing="1.5" Foreground="#52525B"/>
+                                            <Border Background="#121214" BorderBrush="#1C1C1E" BorderThickness="1" CornerRadius="6" Padding="12,10">
+                                                <StackPanel Spacing="3">
+                                                    <TextBlock Text="sRGB LOSSLESS PNG" FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="monospace"/>
+                                                    <TextBlock Text="Profundidad: 8-bit por canal (24-bit RGB)" FontSize="8" Foreground="#606062"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+
+                                        <!-- Dominante Emocional -->
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="DOMINANTE EMOCIONAL" FontSize="7.5" FontWeight="Black" LetterSpacing="1.5" Foreground="#52525B"/>
+                                            <Border Background="#121214" BorderBrush="#1C1C1E" BorderThickness="1" CornerRadius="6" Padding="12,10">
+                                                <StackPanel Spacing="3">
+                                                    <TextBlock Text="{Binding SelectedWpMood}" FontSize="11" FontWeight="Bold" Foreground="#34C759" TextWrapping="Wrap"/>
+                                                    <TextBlock Text="Calculado mediante firma cromática" FontSize="8" Foreground="#606062"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+
+                                        <!-- Contraste Energético -->
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Text="ENERGÍA CROMÁTICA" FontSize="7.5" FontWeight="Black" LetterSpacing="1.5" Foreground="#52525B"/>
+                                            <Border Background="#121214" BorderBrush="#1C1C1E" BorderThickness="1" CornerRadius="6" Padding="12,10">
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{Binding SelectedWpColorEnergy}" FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="monospace"/>
+                                                    <!-- Minimal Horizontal Progress Bar -->
+                                                    <ProgressBar Value="75" Height="2" Minimum="0" Maximum="100" Background="#1C1C1E" Foreground="White" IsIndeterminate="False"/>
+                                                    <TextBlock Text="Distribución de peso visual sRGB" FontSize="8" Foreground="#606062"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+
                         
-                        <!-- SIMULADOR DE PANTALLA DE BLOQUEO DE ALTA COSTURA -->
+                        <!-- SIMULADOR DE PANTALLA DE BLOQUEO DE ALTA COSTURA (📱) -->
                         <Grid IsVisible="{Binding IsLockScreenOverlayVisible}"
                               Background="Transparent"
                               IsHitTestVisible="False"
@@ -847,6 +967,60 @@
                             
                             <!-- Bottom Home Swipe Bar -->
                             <Border Height="3.5" Width="100" Background="White" CornerRadius="1.75" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20" Opacity="0.8"/>
+                        </Grid>
+
+                        <!-- SIMULADOR DE ESCRITORIO MAC / PC DOCK & MENU (💻) -->
+                        <Grid IsVisible="{Binding IsDesktopOverlayVisible}"
+                              Background="Transparent"
+                              IsHitTestVisible="False"
+                              VerticalAlignment="Stretch"
+                              HorizontalAlignment="Stretch">
+                            
+                            <!-- Sleek Top Translucent Mac Menu Bar -->
+                            <Border Height="22" VerticalAlignment="Top" Background="#AA08080A" BorderBrush="#1C1C1E" BorderThickness="0,0,0,1">
+                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
+                                    <!-- Left Menu Links -->
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                                        <TextBlock Text="" FontSize="11" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Finder" FontSize="8" Foreground="White" FontWeight="Black" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Archivo" FontSize="8" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Edición" FontSize="8" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
+                                        <TextBlock Text="Visualización" FontSize="8" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Right Clock Info -->
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                        <TextBlock Text="📶" FontSize="8" Foreground="White" VerticalAlignment="Center" Opacity="0.8"/>
+                                        <TextBlock Text="🔋 100%" FontSize="7" Foreground="White" FontFamily="monospace" VerticalAlignment="Center" Opacity="0.8"/>
+                                        <TextBlock Text="Vie 09:41 AM" FontSize="8" Foreground="White" FontWeight="Black" FontFamily="monospace" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Minimal macOS Bottom App Dock -->
+                            <Border Height="36" Width="200" VerticalAlignment="Bottom" Margin="0,0,0,10" Background="#AA0E0E12" BorderBrush="#252528" BorderThickness="1" CornerRadius="12">
+                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <!-- Mock App wireframe circular chips with premium glass colors -->
+                                    <Border Width="20" Height="20" CornerRadius="10" Background="#FF3B30" BorderBrush="#CCFF3B30" BorderThickness="1"/>
+                                    <Border Width="20" Height="20" CornerRadius="10" Background="#34C759" BorderBrush="#CC34C759" BorderThickness="1"/>
+                                    <Border Width="20" Height="20" CornerRadius="10" Background="#007AFF" BorderBrush="#CC007AFF" BorderThickness="1"/>
+                                    <Border Width="20" Height="20" CornerRadius="10" Background="#FFCC00" BorderBrush="#CCFFCC00" BorderThickness="1"/>
+                                    <Border Width="20" Height="20" CornerRadius="10" Background="#AF52DE" BorderBrush="#CCAF52DE" BorderThickness="1"/>
+                                    <Border Width="20" Height="20" CornerRadius="10" Background="#5856D6" BorderBrush="#CC5856D6" BorderThickness="1"/>
+                                    
+                                    <Separator Width="1" Height="14" Background="#2C2C2E" Margin="2,0"/>
+                                    <Border Width="20" Height="20" CornerRadius="5" Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1"/>
+                                </StackPanel>
+                            </Border>
+                            
+                            <!-- Aesthetic Calendar Widget floating in upper right corner -->
+                            <Border Width="90" Height="90" CornerRadius="14" Background="#AA0E0E12" BorderBrush="#1C1C1E" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,38,15,0">
+                                <StackPanel Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="MAYO" FontSize="7.5" FontWeight="Black" LetterSpacing="1" Foreground="#FF3B30" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="23" FontSize="26" FontWeight="Light" Foreground="White" HorizontalAlignment="Center" FontFamily="Inter, -apple-system, sans-serif"/>
+                                    <TextBlock Text="VIERNES" FontSize="7" FontWeight="Bold" LetterSpacing="0.5" Foreground="#71717A" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
                         </Grid>
                         
                         <!-- Indicador de carga offline -->
@@ -924,7 +1098,7 @@
                         </ItemsControl>
                     </StackPanel>
 
-                    <Grid ColumnDefinitions="*,Auto,Auto,Auto">
+                    <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto">
                         <!-- BOTÓN DESCARGAR -->
                         <Button Grid.Column="0"
                                 Command="{Binding DownloadCommand}"
@@ -1003,8 +1177,86 @@
                             <TextBlock Text="📱" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </ToggleButton>
 
+                        <!-- Toggle de simulador escritorio (💻) -->
+                        <ToggleButton Grid.Column="3"
+                                      IsChecked="{Binding IsDesktopOverlayVisible, Mode=TwoWay}"
+                                      Width="45"
+                                      Height="45"
+                                      CornerRadius="8"
+                                      Margin="0,0,8,0"
+                                      Background="#121212"
+                                      BorderBrush="#1C1C1E"
+                                      BorderThickness="1"
+                                      ToolTip.Tip="SIMULAR ESCRITORIO macOS">
+                            <ToggleButton.Styles>
+                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#121212"/>
+                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </ToggleButton.Styles>
+                            <TextBlock Text="💻" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+
+                        <!-- Toggle de cuadrícula de tercios (📐) -->
+                        <ToggleButton Grid.Column="4"
+                                      IsChecked="{Binding IsCompositionGridVisible, Mode=TwoWay}"
+                                      Width="45"
+                                      Height="45"
+                                      CornerRadius="8"
+                                      Margin="0,0,8,0"
+                                      Background="#121212"
+                                      BorderBrush="#1C1C1E"
+                                      BorderThickness="1"
+                                      ToolTip.Tip="REGLA DE COMPOSICIÓN (TERCIOS)">
+                            <ToggleButton.Styles>
+                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#121212"/>
+                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </ToggleButton.Styles>
+                            <TextBlock Text="📐" FontSize="15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+
+                        <!-- Toggle de cajón técnico Blueprint (ⓘ) -->
+                        <ToggleButton Grid.Column="5"
+                                      IsChecked="{Binding IsTechSpecsDrawerOpen, Mode=TwoWay}"
+                                      Width="45"
+                                      Height="45"
+                                      CornerRadius="8"
+                                      Margin="0,0,8,0"
+                                      Background="#121212"
+                                      BorderBrush="#1C1C1E"
+                                      BorderThickness="1"
+                                      ToolTip.Tip="ESPECIFICACIONES TÉCNICAS BLUEPRINT">
+                            <ToggleButton.Styles>
+                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#121212"/>
+                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </ToggleButton.Styles>
+                            <TextBlock Text="ⓘ" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+
                         <!-- Botón cerrar -->
-                        <Button Grid.Column="3"
+                        <Button Grid.Column="6"
                                 Command="{Binding ClosePreviewCommand}"
                                 Content="CERRAR"
                                 Background="#121212"
@@ -1014,7 +1266,7 @@
                                 FontWeight="Bold"
                                 FontSize="11"
                                 LetterSpacing="0.5"
-                                Width="80"
+                                Width="75"
                                 Height="45"
                                 CornerRadius="8"
                                 HorizontalContentAlignment="Center"
@@ -1402,6 +1654,211 @@
                             </Border>
                         </StackPanel>
                     </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ================= MODO PRESENTACIÓN AMBIENT SLIDESHOW FULLSCREEN OVERLAY ================= -->
+        <Grid Background="#FC08080C"
+              IsVisible="{Binding IsSlideshowActive}"
+              ZIndex="180"
+              Opacity="1">
+            <Grid.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.35"/>
+                </Transitions>
+            </Grid.Transitions>
+            
+            <!-- Wallpaper de Fondo con Shroud Oscuro -->
+            <Image Source="{Binding SlideshowCurrentWp.ImageBitmap}"
+                   Stretch="UniformToFill"
+                   Opacity="0.45"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"/>
+
+            <!-- Sombreado Brutalista inferior y superior para controles -->
+            <Border VerticalAlignment="Bottom" Height="140">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#00000000" Offset="0"/>
+                        <GradientStop Color="#FC08080C" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+            </Border>
+
+            <!-- CONTENIDO CENTRAL: CRONÓMETRO SWISS POMODORO FOCUS -->
+            <Grid VerticalAlignment="Center" HorizontalAlignment="Center" RowDefinitions="Auto,Auto,Auto" IsVisible="{Binding IsFocusTimerActive}">
+                <!-- Modo actual: CONCENTRACIÓN (Blanco) o DESCANSO (Rojo) -->
+                <Border Grid.Row="0"
+                        Background="#1A121214"
+                        BorderBrush="#33FFFFFF"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="10,4"
+                        HorizontalAlignment="Center"
+                        Margin="0,0,0,16">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <TextBlock Text="⚙ STATUS:" FontSize="8" FontWeight="Black" LetterSpacing="1" Foreground="#8E8E93" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding FocusTimerMode}" FontSize="8.5" FontWeight="Black" LetterSpacing="1.5" Foreground="White" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Gran Reloj Monospace -->
+                <TextBlock Grid.Row="1"
+                           Text="{Binding FocusTimerText}"
+                           FontSize="96"
+                           FontWeight="Light"
+                           Foreground="White"
+                           LetterSpacing="-2"
+                           FontFamily="monospace, Courier New, Inter, -apple-system, sans-serif"
+                           HorizontalAlignment="Center"/>
+
+                <!-- Minimalist progress bar -->
+                <ProgressBar Grid.Row="2"
+                             Value="{Binding FocusTimerProgressPercent}"
+                             Minimum="0"
+                             Maximum="100"
+                             Height="2"
+                             Width="200"
+                             Background="#33FFFFFF"
+                             Foreground="White"
+                             HorizontalAlignment="Center"
+                             Margin="0,16,0,0"/>
+            </Grid>
+
+            <!-- BARRA DE CONTROLES INFERIOR BRUTALISTA -->
+            <Border VerticalAlignment="Bottom"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,40"
+                    Background="#EE0E0E12"
+                    BorderBrush="#252528"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="14,10"
+                    Width="480">
+                <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto,Auto,*">
+                    <!-- Título del Wallpaper actual -->
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="8,0,0,0">
+                        <TextBlock Text="{Binding SlideshowCurrentWp.Title}" FontSize="11" FontWeight="Bold" Foreground="White" TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{Binding SlideshowCurrentWp.Author}" FontSize="8" Foreground="#707070" Margin="0,1,0,0"/>
+                    </StackPanel>
+
+                    <!-- Botones de Control del Temporizador Focus -->
+                    <ToggleButton Grid.Column="1"
+                                  IsChecked="{Binding IsFocusTimerActive, Mode=TwoWay}"
+                                  Width="34"
+                                  Height="34"
+                                  CornerRadius="6"
+                                  Margin="0,0,6,0"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  ToolTip.Tip="MOSTRAR/OCULTAR TEMPORIZADOR FOCUS">
+                        <ToggleButton.Styles>
+                            <Style Selector="ToggleButton:checked TextBlock">
+                                <Setter Property="Foreground" Value="White"/>
+                            </Style>
+                            <Style Selector="ToggleButton:not(:checked) TextBlock">
+                                <Setter Property="Foreground" Value="#606060"/>
+                            </Style>
+                        </ToggleButton.Styles>
+                        <TextBlock Text="⏱" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </ToggleButton>
+
+                    <!-- Iniciar/Pausar Temporizador Pomodoro -->
+                    <ToggleButton Grid.Column="2"
+                                  IsVisible="{Binding IsFocusTimerActive}"
+                                  IsChecked="{Binding IsFocusTimerRunning, Mode=TwoWay}"
+                                  Width="34"
+                                  Height="34"
+                                  CornerRadius="6"
+                                  Margin="0,0,6,0"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  ToolTip.Tip="INICIAR/PAUSAR FOCUS TIMER">
+                        <ToggleButton.Styles>
+                            <Style Selector="ToggleButton:checked TextBlock">
+                                <Setter Property="Text" Value="⏸"/>
+                                <Setter Property="Foreground" Value="#34C759"/>
+                            </Style>
+                            <Style Selector="ToggleButton:not(:checked) TextBlock">
+                                <Setter Property="Text" Value="▶"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Style>
+                        </ToggleButton.Styles>
+                        <TextBlock Text="▶" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </ToggleButton>
+
+                    <!-- Reset del Temporizador Pomodoro -->
+                    <Button Grid.Column="3"
+                            IsVisible="{Binding IsFocusTimerActive}"
+                            Command="{Binding ResetFocusTimerCommand}"
+                            Width="34"
+                            Height="34"
+                            CornerRadius="6"
+                            Margin="0,0,16,0"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTip.Tip="REINICIAR FOCUS TIMER">
+                        <TextBlock Text="↺" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+
+                    <Separator Grid.Column="4" Width="1" Height="20" Background="#2C2C2E" Margin="0,0,16,0"/>
+
+                    <!-- Control del Slideshow manual -->
+                    <StackPanel Grid.Column="5" Orientation="Horizontal" Spacing="6">
+                        <!-- Anterior -->
+                        <Button Command="{Binding PrevSlideshowCommand}"
+                                Width="34"
+                                Height="34"
+                                CornerRadius="6"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="WALLPAPER ANTERIOR">
+                            <TextBlock Text="◀" FontSize="10" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                        <!-- Reproducir/Pausar Bucle -->
+                        <ToggleButton IsChecked="{Binding IsSlideshowPlaying, Mode=TwoWay}"
+                                      Width="34"
+                                      Height="34"
+                                      CornerRadius="6"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      ToolTip.Tip="REPRODUCIR/PAUSAR SLIDESHOW">
+                            <ToggleButton.Styles>
+                                <Style Selector="ToggleButton:checked TextBlock">
+                                    <Setter Property="Text" Value="⏸"/>
+                                </Style>
+                                <Style Selector="ToggleButton:not(:checked) TextBlock">
+                                    <Setter Property="Text" Value="▶"/>
+                                </Style>
+                            </ToggleButton.Styles>
+                            <TextBlock Text="⏸" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+                        <!-- Siguiente -->
+                        <Button Command="{Binding NextSlideshowCommand}"
+                                Width="34"
+                                Height="34"
+                                CornerRadius="6"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                ToolTip.Tip="WALLPAPER SIGUIENTE">
+                            <TextBlock Text="▶▶" FontSize="8" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                    </StackPanel>
+
+                    <!-- Salir de la Presentación -->
+                    <Button Grid.Column="6"
+                            Command="{Binding ToggleSlideshowCommand}"
+                            Width="34"
+                            Height="34"
+                            CornerRadius="6"
+                            Margin="16,0,0,0"
+                            Background="#EEFF3B30"
+                            BorderBrush="#FF3B30"
+                            BorderThickness="1"
+                            ToolTip.Tip="CERRAR PRESENTACIÓN">
+                        <TextBlock Text="×" FontSize="15" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
                 </Grid>
             </Border>
         </Grid>

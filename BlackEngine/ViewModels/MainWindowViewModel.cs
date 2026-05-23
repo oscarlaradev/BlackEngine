@@ -149,7 +149,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public string ComplementaryHexColorString => $"#{(255 - SelectedSolidColor.R):X2}{(255 - SelectedSolidColor.G):X2}{(255 - SelectedSolidColor.B):X2}";
     public SolidColorBrush ComplementarySolidColorBrush => new(Color.Parse(ComplementaryHexColorString));
 
-    // Vista previa de lockscreen simulation overlay
+    // Vista previa de lockscreen simulation overlay (📱)
     private bool _isLockScreenOverlayVisible;
     public bool IsLockScreenOverlayVisible
     {
@@ -158,8 +158,197 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             _isLockScreenOverlayVisible = value;
             OnPropertyChanged();
+            if (value) IsDesktopOverlayVisible = false; // Excluyentes entre sí
         }
     }
+
+    // Vista previa de macOS desktop simulation overlay (💻)
+    private bool _isDesktopOverlayVisible;
+    public bool IsDesktopOverlayVisible
+    {
+        get => _isDesktopOverlayVisible;
+        set
+        {
+            _isDesktopOverlayVisible = value;
+            OnPropertyChanged();
+            if (value) IsLockScreenOverlayVisible = false; // Excluyentes entre sí
+        }
+    }
+
+    // MODO PRESENTACIÓN AMBIENT (Slideshow Mode 📺)
+    private bool _isSlideshowActive;
+    public bool IsSlideshowActive
+    {
+        get => _isSlideshowActive;
+        set
+        {
+            _isSlideshowActive = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool _isSlideshowPlaying = true;
+    public bool IsSlideshowPlaying
+    {
+        get => _isSlideshowPlaying;
+        set
+        {
+            _isSlideshowPlaying = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private Wallpaper? _slideshowCurrentWp;
+    public Wallpaper? SlideshowCurrentWp
+    {
+        get => _slideshowCurrentWp;
+        set
+        {
+            _slideshowCurrentWp = value;
+            OnPropertyChanged();
+        }
+    }
+
+    // MODO FOCUS / POMODORO TIMER EN SLIDESHOW
+    private bool _isFocusTimerActive;
+    public bool IsFocusTimerActive
+    {
+        get => _isFocusTimerActive;
+        set
+        {
+            _isFocusTimerActive = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private bool _isFocusTimerRunning;
+    public bool IsFocusTimerRunning
+    {
+        get => _isFocusTimerRunning;
+        set
+        {
+            _isFocusTimerRunning = value;
+            OnPropertyChanged();
+        }
+    }
+
+    private int _focusRemainingSeconds = 1500; // 25 minutes default
+    public int FocusRemainingSeconds
+    {
+        get => _focusRemainingSeconds;
+        set
+        {
+            _focusRemainingSeconds = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(FocusTimerText));
+            OnPropertyChanged(nameof(FocusTimerProgressPercent));
+        }
+    }
+
+    private string _focusTimerMode = "CONCENTRACIÓN"; // CONCENTRACIÓN or DESCANSO
+    public string FocusTimerMode
+    {
+        get => _focusTimerMode;
+        set
+        {
+            _focusTimerMode = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(FocusTimerProgressPercent));
+        }
+    }
+
+    public string FocusTimerText
+    {
+        get
+        {
+            int minutes = FocusRemainingSeconds / 60;
+            int seconds = FocusRemainingSeconds % 60;
+            return $"{minutes:D2}:{seconds:D2}";
+        }
+    }
+
+    public double FocusTimerProgressPercent => (FocusRemainingSeconds / (FocusTimerMode == "CONCENTRACIÓN" ? 1500.0 : 300.0)) * 100.0;
+
+
+    // CUADRÍCULA DE COMPOSICIÓN / BLUEPRINT (📐)
+    private bool _isCompositionGridVisible;
+    public bool IsCompositionGridVisible
+    {
+        get => _isCompositionGridVisible;
+        set
+        {
+            _isCompositionGridVisible = value;
+            OnPropertyChanged();
+        }
+    }
+
+    // PANEL BLUEPRINT DE DETALLES DE ARTE (ⓘ)
+    private bool _isTechSpecsDrawerOpen;
+    public bool IsTechSpecsDrawerOpen
+    {
+        get => _isTechSpecsDrawerOpen;
+        set
+        {
+            _isTechSpecsDrawerOpen = value;
+            OnPropertyChanged();
+        }
+    }
+
+    // Propiedades calculadas dinámicamente basadas en el wallpaper y su paleta
+    public string SelectedWpDimensions => SelectedWallpaper != null
+        ? (SelectedWallpaper.DeviceType == "PC" ? "3840 x 2160 (UHD 4K)" : "1440 x 3200 (QHD+)")
+        : "N/A";
+
+    public string SelectedWpMood => SelectedWallpaper != null
+        ? ComputeMoodFromColors()
+        : "N/A";
+
+    public string SelectedWpColorEnergy => SelectedWallpaper != null
+        ? ComputeColorEnergy()
+        : "N/A";
+
+    private string ComputeMoodFromColors()
+    {
+        if (ExtractedColors.Count == 0) return "Equilibrio Nórdico / Neutro";
+        // Tomar el color de acento o el color promedio
+        var color = ExtractedColors.Count > 4 ? ExtractedColors[4] : ExtractedColors[0];
+        // Calcular matiz (hue) aproximado de forma super simple
+        double r = color.R / 255.0;
+        double g = color.G / 255.0;
+        double b = color.B / 255.0;
+        double max = Math.Max(r, Math.Max(g, b));
+        double min = Math.Min(r, Math.Min(g, b));
+        double h = 0;
+        if (max != min)
+        {
+            if (max == r) h = (g - b) / (max - min);
+            else if (max == g) h = 2.0 + (b - r) / (max - min);
+            else h = 4.0 + (r - g) / (max - min);
+            h *= 60;
+            if (h < 0) h += 360;
+        }
+
+        if (max < 0.15) return "Obsidiana / Foco Absoluto 🖤";
+        if (h >= 0 && h < 45 || h >= 320) return "Cálido / Energía Activa 🔥";
+        if (h >= 45 && h < 160) return "Pastel / Naturaleza Orgánica 🌿";
+        if (h >= 160 && h < 260) return "Noche Cyberpunk / Calma Digital 🌌";
+        return "Místico / Creativo Violeta 🦄";
+    }
+
+    private string ComputeColorEnergy()
+    {
+        if (ExtractedColors.Count == 0) return "0%";
+        // Calcular la luminancia promedio de los colores para representar la "energía de color"
+        double totalLuminance = 0;
+        foreach (var c in ExtractedColors)
+        {
+            totalLuminance += (0.299 * c.R + 0.587 * c.G + 0.114 * c.B) / 255.0;
+        }
+        double avgLuminance = totalLuminance / ExtractedColors.Count;
+        int percentage = (int)Math.Clamp((1.0 - avgLuminance) * 100, 10, 100);
+        return $"{percentage}% Contraste Orgánico";
+    }
+
 
     // Densidad de Ruido Táctil para Sólidos (0.0: Ninguno, 1.0: Fino, 2.0: Táctil)
     private double _grainLevel = 0.0;
@@ -509,6 +698,16 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public ICommand SwitchGrainLevelCommand { get; }
     public ICommand ToggleLockScreenOverlayCommand { get; }
     public ICommand CopyCodeCommand { get; }
+    public ICommand ToggleDesktopOverlayCommand { get; }
+    public ICommand ToggleSlideshowCommand { get; }
+    public ICommand ToggleSlideshowPlayCommand { get; }
+    public ICommand NextSlideshowCommand { get; }
+    public ICommand PrevSlideshowCommand { get; }
+    public ICommand ToggleFocusTimerCommand { get; }
+    public ICommand StartStopFocusTimerCommand { get; }
+    public ICommand ResetFocusTimerCommand { get; }
+    public ICommand ToggleCompositionGridCommand { get; }
+    public ICommand ToggleTechSpecsDrawerCommand { get; }
 
     public MainWindowViewModel()
     {
@@ -537,6 +736,16 @@ public class MainWindowViewModel : INotifyPropertyChanged
         SwitchGrainLevelCommand = new RelayCommand<string>(lvl => GrainLevel = double.TryParse(lvl, out var res) ? res : 0.0);
         ToggleLockScreenOverlayCommand = new RelayCommand<object>(_ => IsLockScreenOverlayVisible = !IsLockScreenOverlayVisible);
         CopyCodeCommand = new RelayCommand<string>(CopyCode);
+        ToggleDesktopOverlayCommand = new RelayCommand<object>(_ => IsDesktopOverlayVisible = !IsDesktopOverlayVisible);
+        ToggleSlideshowCommand = new RelayCommand<object>(_ => ToggleSlideshow());
+        ToggleSlideshowPlayCommand = new RelayCommand<object>(_ => IsSlideshowPlaying = !IsSlideshowPlaying);
+        NextSlideshowCommand = new RelayCommand<object>(_ => AdvanceSlideshow(1));
+        PrevSlideshowCommand = new RelayCommand<object>(_ => AdvanceSlideshow(-1));
+        ToggleFocusTimerCommand = new RelayCommand<object>(_ => IsFocusTimerActive = !IsFocusTimerActive);
+        StartStopFocusTimerCommand = new RelayCommand<object>(_ => IsFocusTimerRunning = !IsFocusTimerRunning);
+        ResetFocusTimerCommand = new RelayCommand<object>(_ => { FocusRemainingSeconds = FocusTimerMode == "CONCENTRACIÓN" ? 1500 : 300; IsFocusTimerRunning = false; });
+        ToggleCompositionGridCommand = new RelayCommand<object>(_ => IsCompositionGridVisible = !IsCompositionGridVisible);
+        ToggleTechSpecsDrawerCommand = new RelayCommand<object>(_ => IsTechSpecsDrawerOpen = !IsTechSpecsDrawerOpen);
 
         // Inicializar Carpeta de Destino
         var defaultFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "BlackEngine");
@@ -544,6 +753,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
         InitializeWallpapers();
         _ = SyncFeedFromGitHubAsync(); // Intentar sincronizar con nube
+        _ = RunSlideshowLoopAsync(); // Iniciar bucle de presentación cinematográfica
+        _ = RunFocusTimerLoopAsync(); // Iniciar cronómetro de enfoque Pomodoro
         CalculateCacheSize();
         RebuildMasterActions();
     }
@@ -854,6 +1065,10 @@ public class MainWindowViewModel : INotifyPropertyChanged
         ExtractedColors.Add(HslToRgb(baseHue, 0.12, 0.40)); // Tonalidad dominante apastelada
         ExtractedColors.Add(HslToRgb((baseHue + 150) % 360, 0.08, 0.60)); // Armónico opuesto suave
         ExtractedColors.Add(HslToRgb(baseHue, 0.30, 0.85)); // Acento brillante
+
+        OnPropertyChanged(nameof(SelectedWpDimensions));
+        OnPropertyChanged(nameof(SelectedWpMood));
+        OnPropertyChanged(nameof(SelectedWpColorEnergy));
     }
 
     private void ApplyExtractedColor(Color color)
@@ -1147,6 +1362,110 @@ public class MainWindowViewModel : INotifyPropertyChanged
             IsToastVisible = false;
         }
     }
+
+    private void ToggleSlideshow()
+    {
+        if (Wallpapers.Count == 0)
+        {
+            ShowToast("La galería está vacía.");
+            return;
+        }
+
+        IsSlideshowActive = !IsSlideshowActive;
+        if (IsSlideshowActive)
+        {
+            IsSlideshowPlaying = true;
+            SlideshowCurrentWp = Wallpapers[0];
+            ShowToast("Presentación Iniciada. 📺");
+        }
+    }
+
+    private void AdvanceSlideshow(int direction)
+    {
+        if (Wallpapers.Count == 0) return;
+        int currentIndex = SlideshowCurrentWp != null ? Wallpapers.IndexOf(SlideshowCurrentWp) : 0;
+        if (currentIndex == -1) currentIndex = 0;
+
+        int nextIndex = (currentIndex + direction) % Wallpapers.Count;
+        if (nextIndex < 0) nextIndex = Wallpapers.Count - 1;
+
+        SlideshowCurrentWp = Wallpapers[nextIndex];
+    }
+
+    private async Task RunSlideshowLoopAsync()
+    {
+        while (true)
+        {
+            await Task.Delay(4500);
+            try
+            {
+                if (IsSlideshowActive && IsSlideshowPlaying && Wallpapers.Count > 0)
+                {
+                    int currentIndex = SlideshowCurrentWp != null ? Wallpapers.IndexOf(SlideshowCurrentWp) : 0;
+                    if (currentIndex == -1) currentIndex = 0;
+                    int nextIndex = (currentIndex + 1) % Wallpapers.Count;
+                    
+                    // Actualizar en el hilo de UI
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+                    {
+                        if (IsSlideshowActive && IsSlideshowPlaying)
+                        {
+                            SlideshowCurrentWp = Wallpapers[nextIndex];
+                        }
+                    });
+                }
+            }
+            catch
+            {
+                // Ignorar problemas de concurrencia al vaciar colecciones
+            }
+        }
+    }
+
+    private async Task RunFocusTimerLoopAsync()
+    {
+        while (true)
+        {
+            await Task.Delay(1000);
+            try
+            {
+                if (IsSlideshowActive && IsFocusTimerActive && IsFocusTimerRunning)
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                    {
+                        if (FocusRemainingSeconds > 0)
+                        {
+                            FocusRemainingSeconds--;
+                        }
+                        else
+                        {
+                            // ¡Temporizador terminado!
+                            IsFocusTimerRunning = false;
+                            if (FocusTimerMode == "CONCENTRACIÓN")
+                            {
+                                FocusTimerMode = "DESCANSO";
+                                FocusRemainingSeconds = 300; // 5 minutes break
+                                ShowToast("¡Sesión de Enfoque Completada! Tómate un descanso. ☕");
+                            }
+                            else
+                            {
+                                FocusTimerMode = "CONCENTRACIÓN";
+                                FocusRemainingSeconds = 1500; // 25 minutes work
+                                ShowToast("¡Hora de Enfocarse! Nueva sesión iniciada. 💻");
+                            }
+                            // Avanzar el wallpaper automáticamente cuando el timer termina
+                            AdvanceSlideshow(1);
+                        }
+                    });
+                }
+            }
+            catch
+            {
+                // Ignorar problemas de concurrencia
+            }
+        }
+    }
+
 
     // INotifyPropertyChanged
     public event PropertyChangedEventHandler? PropertyChanged;
