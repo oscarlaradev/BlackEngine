@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Avalonia;
 using Avalonia.Media;
+using Avalonia.Input.Platform;
 using Avalonia.Media.Imaging;
 using BlackEngine.Models;
 using BlackEngine.Services;
@@ -127,11 +128,60 @@ public class MainWindowViewModel : INotifyPropertyChanged
             OnPropertyChanged();
             OnPropertyChanged(nameof(HexColorString));
             OnPropertyChanged(nameof(SelectedSolidColorBrush));
+            OnPropertyChanged(nameof(OledSavingText));
         }
     }
 
     public string HexColorString => $"#{SelectedSolidColor.R:X2}{SelectedSolidColor.G:X2}{SelectedSolidColor.B:X2}";
     public SolidColorBrush SelectedSolidColorBrush => new(SelectedSolidColor);
+
+    // Vista previa de lockscreen simulation overlay
+    private bool _isLockScreenOverlayVisible;
+    public bool IsLockScreenOverlayVisible
+    {
+        get => _isLockScreenOverlayVisible;
+        set
+        {
+            _isLockScreenOverlayVisible = value;
+            OnPropertyChanged();
+        }
+    }
+
+    // Densidad de Ruido Táctil para Sólidos (0.0: Ninguno, 1.0: Fino, 2.0: Táctil)
+    private double _grainLevel = 0.0;
+    public double GrainLevel
+    {
+        get => _grainLevel;
+        set
+        {
+            _grainLevel = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(IsGrainNone));
+            OnPropertyChanged(nameof(IsGrainFine));
+            OnPropertyChanged(nameof(IsGrainTactile));
+        }
+    }
+
+    public bool IsGrainNone => GrainLevel == 0.0;
+    public bool IsGrainFine => GrainLevel == 1.0;
+    public bool IsGrainTactile => GrainLevel == 2.0;
+
+    // Oled saving efficiency HUD
+    public string OledSavingText
+    {
+        get
+        {
+            double r = SelectedSolidColor.R;
+            double g = SelectedSolidColor.G;
+            double b = SelectedSolidColor.B;
+            double l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            double saving = (1.0 - (l / 255.0)) * 100.0;
+            return $"{saving:F1}% AHORRO OLED";
+        }
+    }
+
+    // Catalog elements count indicator
+    public string CatalogCountText => $"{Wallpapers.Count} OBRAS FILTRADAS";
 
     // Formato de Descarga del Color Sólido: PC o Móvil
     private string _solidColorFormat = "Móvil"; // Celular por defecto
@@ -389,6 +439,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public ICommand DeleteWallpaperCommand { get; }
     public ICommand ApplyExtractedColorCommand { get; }
     public ICommand SwitchSolidFormatCommand { get; }
+    public ICommand CopyLinkCommand { get; }
+    public ICommand SwitchGrainLevelCommand { get; }
+    public ICommand ToggleLockScreenOverlayCommand { get; }
 
     public MainWindowViewModel()
     {
@@ -413,6 +466,9 @@ public class MainWindowViewModel : INotifyPropertyChanged
         DeleteWallpaperCommand = new RelayCommand<Wallpaper>(async wp => await DeleteWallpaperAsync(wp));
         ApplyExtractedColorCommand = new RelayCommand<Color>(color => ApplyExtractedColor((Color)color));
         SwitchSolidFormatCommand = new RelayCommand<string>(fmt => SolidColorFormat = fmt ?? "Móvil");
+        CopyLinkCommand = new RelayCommand<Wallpaper>(CopyLink);
+        SwitchGrainLevelCommand = new RelayCommand<string>(lvl => GrainLevel = double.TryParse(lvl, out var res) ? res : 0.0);
+        ToggleLockScreenOverlayCommand = new RelayCommand<object>(_ => IsLockScreenOverlayVisible = !IsLockScreenOverlayVisible);
 
         // Inicializar Carpeta de Destino
         var defaultFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "BlackEngine");
@@ -684,8 +740,27 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         if (wp == null) return;
         SelectedWallpaper = wp;
+        IsLockScreenOverlayVisible = false; // Reiniciar simulación al abrir
         ExtractHarmonicPalette(wp); // Extraer paleta armónica asimilando el wallpaper
         RebuildMasterActions();
+    }
+
+    private void CopyLink(Wallpaper? wp)
+    {
+        if (wp == null) return;
+        try
+        {
+            var mainWindow = (App.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            if (mainWindow?.Clipboard != null)
+            {
+                _ = mainWindow.Clipboard.SetTextAsync(wp.HighResUrl);
+                ShowToast("¡Enlace HD copiado al portapapeles!");
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowToast($"Error al copiar: {ex.Message}");
+        }
     }
 
     private void ClosePreview()
@@ -790,12 +865,12 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
             Wallpapers.Add(wp);
         }
+        OnPropertyChanged(nameof(CatalogCountText));
     }
 
     private void ToggleFavorite(Wallpaper? wp)
     {
         if (wp == null) return;
-        wp.IsFavorite = !wp.IsFavorite;
         
         if (SelectedCategory == "Favoritos")
         {
@@ -888,6 +963,26 @@ public class MainWindowViewModel : INotifyPropertyChanged
             using (var context = renderTarget.CreateDrawingContext())
             {
                 context.DrawRectangle(new SolidColorBrush(SelectedSolidColor), null, new Rect(0, 0, width, height));
+
+                // Generar grano/ruido táctil si está activado
+                if (GrainLevel > 0)
+                {
+                    var rand = new Random();
+                    var whiteBrush = new SolidColorBrush(Color.Parse("#FFFFFF"), 0.04);
+                    var blackBrush = new SolidColorBrush(Color.Parse("#000000"), 0.04);
+                    int densityDivisor = GrainLevel == 1.0 ? 55 : 22;
+                    int pointsCount = (width * height) / densityDivisor;
+
+                    for (int i = 0; i < pointsCount; i++)
+                    {
+                        double x = rand.NextDouble() * width;
+                        double y = rand.NextDouble() * height;
+                        double size = rand.NextDouble() * 1.5 + 0.5;
+
+                        var brush = rand.Next(2) == 0 ? whiteBrush : blackBrush;
+                        context.DrawRectangle(brush, null, new Rect(x, y, size, size));
+                    }
+                }
             }
 
             renderTarget.Save(destPath);

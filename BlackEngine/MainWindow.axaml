@@ -23,58 +23,70 @@
         <!-- CONTENIDO PRINCIPAL -->
         <Grid RowDefinitions="Auto,*" Margin="20,50,20,15">
 
-            <!-- CABECERA ULTRA-FINA: LOGO BRUTALISTA, PESTAÑAS Y ICONO AJUSTES -->
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,18">
+            <!-- CABECERA EN DOS FILAS: FILA 0: LOGO Y AJUSTES | FILA 1: TABS ALINEADOS AL CENTRO -->
+            <Grid Grid.Row="0" RowDefinitions="Auto,Auto" Margin="0,0,0,22">
                 
-                <!-- LOGO BRUTALISTA DE BLACKENGINE -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                    <!-- Icono de doble rombo rotado minimalista superpuesto -->
-                    <Grid Width="16" Height="16" VerticalAlignment="Center">
-                        <!-- Rombo de acento oscuro de fondo -->
-                        <Border Width="9" Height="9" BorderBrush="#404040" BorderThickness="1" CornerRadius="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                            <Border.RenderTransform>
-                                <RotateTransform Angle="45"/>
-                            </Border.RenderTransform>
-                        </Border>
-                        <!-- Rombo de luz frontal -->
-                        <Border Width="9" Height="9" Background="White" BorderBrush="White" BorderThickness="1" CornerRadius="1.5" HorizontalAlignment="Left" VerticalAlignment="Top">
-                            <Border.RenderTransform>
-                                <RotateTransform Angle="45"/>
-                            </Border.RenderTransform>
-                        </Border>
-                    </Grid>
+                <!-- FILA 0: LOGO Y AJUSTES -->
+                <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center">
                     
-                    <!-- Logotipo Tipográfico Suizo -->
-                    <StackPanel Orientation="Vertical" Spacing="-2" VerticalAlignment="Center">
-                        <StackPanel Orientation="Horizontal" Spacing="2">
-                            <TextBlock Text="B L A C K" FontSize="10.5" FontWeight="Light" Foreground="#8A8A8E" LetterSpacing="2" FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"/>
-                            <TextBlock Text="ENGINE" FontSize="10.5" FontWeight="Black" Foreground="White" LetterSpacing="2" FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"/>
-                            <TextBlock Text="™" FontSize="5" FontWeight="Black" Foreground="#55555A" VerticalAlignment="Top"/>
-                        </StackPanel>
-                        <TextBlock Text="C H R O M A T I C   S T U D I O" FontSize="5" FontWeight="Bold" LetterSpacing="1.5" Foreground="#55555A" Margin="1,0,0,0" FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"/>
+                    <!-- LOGO BRUTALISTA DE BLACKENGINE -->
+                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                        <!-- Icono de doble rombo rotado minimalista superpuesto -->
+                        <Grid Width="16" Height="16" VerticalAlignment="Center">
+                            <!-- Rombo de acento oscuro de fondo -->
+                            <Border Width="8" Height="8" BorderBrush="#444446" BorderThickness="1" CornerRadius="1.5" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                                <Border.RenderTransform>
+                                    <RotateTransform Angle="45"/>
+                                </Border.RenderTransform>
+                            </Border>
+                            <!-- Rombo de luz frontal -->
+                            <Border Width="8" Height="8" Background="White" BorderBrush="White" BorderThickness="1" CornerRadius="1.5" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Border.RenderTransform>
+                                    <RotateTransform Angle="45"/>
+                                </Border.RenderTransform>
+                            </Border>
+                        </Grid>
+                        <TextBlock Text="BlackEngine" FontSize="12.5" FontWeight="Black" LetterSpacing="0.8" Foreground="White" FontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif" VerticalAlignment="Center"/>
                     </StackPanel>
-                </StackPanel>
 
-                <!-- NAV TABS CENTRALES (GALERÍA & COLOR 3D) -->
-                <ListBox Grid.Column="1"
+                    <!-- ESPACIADOR -->
+                    <Grid Grid.Column="1"/>
+
+                    <!-- BOTÓN AJUSTES TIPOGRÁFICO PREMIUM (Slide Trigger) -->
+                    <Button Grid.Column="2"
+                            Command="{Binding ToggleSettingsCommand}"
+                            Background="Transparent"
+                            BorderBrush="#1C1C1E"
+                            BorderThickness="1"
+                            Width="30"
+                            Height="30"
+                            CornerRadius="6"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                        <TextBlock Text="⚙" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                </Grid>
+                
+                <!-- FILA 1: PESTAÑAS (TABS) CENTRADAS MÁS ABAJO -->
+                <ListBox Grid.Row="1"
                          ItemsSource="{Binding Tabs}"
                          SelectedItem="{Binding SelectedTab, Mode=TwoWay}"
                          Background="Transparent"
                          BorderThickness="0"
                          Padding="0"
                          HorizontalAlignment="Center"
-                         Margin="10,0,10,0">
+                         Margin="0,18,0,0">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <StackPanel Orientation="Horizontal" Spacing="15"/>
+                            <StackPanel Orientation="Horizontal" Spacing="25"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
-                            <Setter Property="Padding" Value="0,6"/>
+                            <Setter Property="Padding" Value="0,4"/>
                             <Setter Property="Background" Value="Transparent"/>
                             <Setter Property="Foreground" Value="#505050"/>
-                            <Setter Property="FontSize" Value="9"/>
+                            <Setter Property="FontSize" Value="9.5"/>
                             <Setter Property="FontWeight" Value="Black"/>
                             <Setter Property="LetterSpacing" Value="2"/>
                             <Setter Property="Transitions">
@@ -97,37 +109,23 @@
                         </Style>
                     </ListBox.Styles>
                 </ListBox>
-
-                <!-- BOTÓN AJUSTES TIPOGRÁFICO PREMIUM (Slide Trigger) -->
-                <Button Grid.Column="2"
-                        Command="{Binding ToggleSettingsCommand}"
-                        Background="Transparent"
-                        BorderBrush="#1C1C1E"
-                        BorderThickness="1"
-                        Width="30"
-                        Height="30"
-                        CornerRadius="6"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center">
-                    <TextBlock Text="⚙" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                </Button>
             </Grid>
 
             <!-- VISTA DE PANELES MULTICAPA -->
             <Grid Grid.Row="1">
 
                 <!-- ================= VISTA 1: GALERÍA ================= -->
-                <Grid RowDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding IsGalleryTabVisible}">
+                <Grid RowDefinitions="Auto,*" IsVisible="{Binding IsGalleryTabVisible}">
                     
-                    <!-- BUSCADOR MINIMALISTA + SPOTLIGHT DIRECT SHORTCUT -->
+                    <!-- BUSCADOR MINIMALISTA + FILTRO PREMIUM POPUP + SPOTLIGHT DIRECT SHORTCUT -->
                     <Border Grid.Row="0"
                             Background="#09090B"
                             BorderBrush="#18181B"
                             BorderThickness="1"
                             CornerRadius="8"
                             Padding="12,3"
-                            Margin="0,0,0,10">
-                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            Margin="0,0,0,12">
+                        <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto">
                             <TextBlock Grid.Column="0"
                                        Text="⚲ SEARCH"
                                        Foreground="#52525B"
@@ -137,18 +135,140 @@
                                        VerticalAlignment="Center"
                                        Margin="0,0,14,0"
                                        FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"/>
-                            <TextBox Grid.Column="1"
+                            <!-- Contador técnico de catálogo -->
+                            <Border Grid.Column="1"
+                                    Background="#18181B"
+                                    BorderBrush="#27272A"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="6,2"
+                                    Margin="0,0,14,0"
+                                    VerticalAlignment="Center"
+                                    IsVisible="{Binding Wallpapers.Count}">
+                                <TextBlock Text="{Binding CatalogCountText}" FontSize="7" FontWeight="Black" Foreground="#A1A1AA" FontFamily="monospace"/>
+                            </Border>
+                            <TextBox Grid.Column="2"
                                      PlaceholderText="Buscar obras, autores o categorías..."
                                      Text="{Binding SearchText, Mode=TwoWay}"
                                      Background="Transparent"
                                      BorderThickness="0"
                                      Foreground="White"
                                      FontSize="12"
-                                     Padding="0,6"
+                                     Padding="0,1,0,0"
                                      VerticalAlignment="Center"
+                                     VerticalContentAlignment="Center"
                                      FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"/>
                             
-                            <Button Grid.Column="2"
+                            <!-- BOTÓN DE FILTRO FLYOUT (DESPLEGABLE MINIMALISTA Y ESPECTACULAR) -->
+                            <Button Grid.Column="3"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="0"
+                                    Width="32"
+                                    Height="32"
+                                    CornerRadius="6"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,4,0">
+                                <TextBlock Text="⌥" FontSize="12" Foreground="#A1A1AA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Button.Flyout>
+                                    <Flyout Placement="BottomEdgeAlignedRight" ShowMode="Standard">
+                                        <Border Background="#0C0C0E"
+                                                BorderBrush="#1C1C1E"
+                                                BorderThickness="1"
+                                                CornerRadius="10"
+                                                Padding="14"
+                                                Width="240"
+                                                BoxShadow="0 10 30 0 #A0000000">
+                                            <StackPanel Spacing="14">
+                                                <!-- DISPOSITIVO -->
+                                                <StackPanel Spacing="6">
+                                                    <TextBlock Text="FILTRAR POR DISPOSITIVO" FontSize="7.5" FontWeight="Black" LetterSpacing="1.5" Foreground="#52525B"/>
+                                                    <ListBox ItemsSource="{Binding DeviceFilters}"
+                                                             SelectedItem="{Binding SelectedDeviceFilter, Mode=TwoWay}"
+                                                             Background="Transparent"
+                                                             BorderThickness="0"
+                                                             Padding="0">
+                                                        <ListBox.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <UniformGrid Columns="3"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ListBox.ItemsPanel>
+                                                        <ListBox.Styles>
+                                                            <Style Selector="ListBoxItem">
+                                                                <Setter Property="Padding" Value="0,6"/>
+                                                                <Setter Property="Background" Value="#18181B"/>
+                                                                <Setter Property="Foreground" Value="#71717A"/>
+                                                                <Setter Property="FontSize" Value="8.5"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                                <Setter Property="CornerRadius" Value="4"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
+                                                                <Setter Property="BorderBrush" Value="#27272A"/>
+                                                                <Setter Property="Margin" Value="2"/>
+                                                            </Style>
+                                                            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                                                <Setter Property="Background" Value="#27272A"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                            </Style>
+                                                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                                                <Setter Property="Background" Value="White"/>
+                                                                <Setter Property="Foreground" Value="Black"/>
+                                                                <Setter Property="BorderBrush" Value="White"/>
+                                                            </Style>
+                                                        </ListBox.Styles>
+                                                    </ListBox>
+                                                </StackPanel>
+
+                                                <!-- DIVIDER -->
+                                                <Border Height="1" Background="#1C1C1E"/>
+
+                                                <!-- CATEGORÍA -->
+                                                <StackPanel Spacing="6">
+                                                    <TextBlock Text="FILTRAR POR ESTILO / CATEGORÍA" FontSize="7.5" FontWeight="Black" LetterSpacing="1.5" Foreground="#52525B"/>
+                                                    <ListBox ItemsSource="{Binding Categories}"
+                                                             SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                                                             Background="Transparent"
+                                                             BorderThickness="0"
+                                                             Padding="0">
+                                                        <ListBox.ItemsPanel>
+                                                            <ItemsPanelTemplate>
+                                                                <WrapPanel ItemWidth="68" ItemHeight="26"/>
+                                                            </ItemsPanelTemplate>
+                                                        </ListBox.ItemsPanel>
+                                                        <ListBox.Styles>
+                                                            <Style Selector="ListBoxItem">
+                                                                <Setter Property="Padding" Value="2,4"/>
+                                                                <Setter Property="Background" Value="#18181B"/>
+                                                                <Setter Property="Foreground" Value="#71717A"/>
+                                                                <Setter Property="FontSize" Value="8"/>
+                                                                <Setter Property="FontWeight" Value="Bold"/>
+                                                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                                                <Setter Property="CornerRadius" Value="4"/>
+                                                                <Setter Property="BorderThickness" Value="1"/>
+                                                                <Setter Property="BorderBrush" Value="#27272A"/>
+                                                                <Setter Property="Margin" Value="2"/>
+                                                            </Style>
+                                                            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                                                <Setter Property="Background" Value="#27272A"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                            </Style>
+                                                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                                                <Setter Property="Background" Value="White"/>
+                                                                <Setter Property="Foreground" Value="Black"/>
+                                                                <Setter Property="BorderBrush" Value="White"/>
+                                                            </Style>
+                                                        </ListBox.Styles>
+                                                    </ListBox>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Border>
+                                    </Flyout>
+                                </Button.Flyout>
+                            </Button>
+                            
+                            <Button Grid.Column="4"
                                     Command="{Binding ToggleSpotlightCommand}"
                                     Background="#18181B"
                                     BorderBrush="#27272A"
@@ -161,101 +281,8 @@
                         </Grid>
                     </Border>
 
-                    <!-- CHIPS DE FILTRO DISPOSITIVO (TODOS, PC, CELULAR) -->
-                    <Border Grid.Row="1" BorderBrush="#18181B" BorderThickness="0,0,0,1" Padding="0,0,0,8" Margin="0,0,0,10">
-                        <Grid ColumnDefinitions="Auto,*">
-                            <TextBlock Grid.Column="0" Text="DEVICE" FontSize="7.5" FontWeight="Black" LetterSpacing="2" Foreground="#52525B" VerticalAlignment="Center" Margin="0,0,15,0" FontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif"/>
-                            <ListBox Grid.Column="1"
-                                     ItemsSource="{Binding DeviceFilters}"
-                                     SelectedItem="{Binding SelectedDeviceFilter, Mode=TwoWay}"
-                                     Background="Transparent"
-                                     BorderThickness="0"
-                                     Padding="0">
-                                <ListBox.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" Spacing="8"/>
-                                    </ItemsPanelTemplate>
-                                </ListBox.ItemsPanel>
-                                <ListBox.Styles>
-                                    <Style Selector="ListBoxItem">
-                                        <Setter Property="Padding" Value="10,4"/>
-                                        <Setter Property="Background" Value="#09090B"/>
-                                        <Setter Property="Foreground" Value="#71717A"/>
-                                        <Setter Property="FontSize" Value="8.5"/>
-                                        <Setter Property="FontWeight" Value="Bold"/>
-                                        <Setter Property="CornerRadius" Value="6"/>
-                                        <Setter Property="BorderThickness" Value="1"/>
-                                        <Setter Property="BorderBrush" Value="#18181B"/>
-                                        <Setter Property="Transitions">
-                                            <Transitions>
-                                                <BrushTransition Property="Background" Duration="0:0:0.12"/>
-                                                <BrushTransition Property="Foreground" Duration="0:0:0.12"/>
-                                            </Transitions>
-                                        </Setter>
-                                    </Style>
-                                    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="#18181B"/>
-                                        <Setter Property="Foreground" Value="White"/>
-                                        <Setter Property="BorderBrush" Value="#27272A"/>
-                                    </Style>
-                                    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                                        <Setter Property="Background" Value="White"/>
-                                        <Setter Property="Foreground" Value="Black"/>
-                                        <Setter Property="BorderBrush" Value="White"/>
-                                    </Style>
-                                </ListBox.Styles>
-                            </ListBox>
-                        </Grid>
-                    </Border>
-
-                    <!-- CHIPS DE FILTRO DE CATEGORÍAS (ALTO CONTRASTE) -->
-                    <ScrollViewer Grid.Row="2"
-                                  HorizontalScrollBarVisibility="Hidden"
-                                  VerticalScrollBarVisibility="Disabled"
-                                  Margin="0,0,0,12">
-                        <ListBox ItemsSource="{Binding Categories}"
-                                 SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
-                                 Background="Transparent"
-                                 BorderThickness="0"
-                                 Padding="0">
-                            <ListBox.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" Spacing="6"/>
-                                </ItemsPanelTemplate>
-                            </ListBox.ItemsPanel>
-                            <ListBox.Styles>
-                                <Style Selector="ListBoxItem">
-                                    <Setter Property="Padding" Value="12,5"/>
-                                    <Setter Property="Background" Value="#09090B"/>
-                                    <Setter Property="Foreground" Value="#71717A"/>
-                                    <Setter Property="FontSize" Value="8.5"/>
-                                    <Setter Property="FontWeight" Value="Bold"/>
-                                    <Setter Property="CornerRadius" Value="6"/>
-                                    <Setter Property="BorderThickness" Value="1"/>
-                                    <Setter Property="BorderBrush" Value="#18181B"/>
-                                    <Setter Property="Transitions">
-                                        <Transitions>
-                                            <BrushTransition Property="Background" Duration="0:0:0.12"/>
-                                            <BrushTransition Property="Foreground" Duration="0:0:0.12"/>
-                                        </Transitions>
-                                    </Setter>
-                                </Style>
-                                <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="#18181B"/>
-                                    <Setter Property="Foreground" Value="White"/>
-                                    <Setter Property="BorderBrush" Value="#27272A"/>
-                                </Style>
-                                <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="Foreground" Value="Black"/>
-                                    <Setter Property="BorderBrush" Value="White"/>
-                                </Style>
-                            </ListBox.Styles>
-                        </ListBox>
-                    </ScrollViewer>
-
                     <!-- ESTADO VACÍO INICIAL MINIMALISTA -->
-                    <StackPanel Grid.Row="3"
+                    <StackPanel Grid.Row="1"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Spacing="16"
@@ -277,7 +304,7 @@
                     </StackPanel>
 
                     <!-- GRILLA DE IMÁGENES -->
-                    <ListBox Grid.Row="3"
+                    <ListBox Grid.Row="1"
                              ItemsSource="{Binding Wallpapers}"
                              Background="Transparent"
                              BorderThickness="0"
@@ -569,6 +596,78 @@
                                 </Border>
                             </Grid>
 
+                            <!-- TACTILE GRAIN SELECTOR SEGMENTED CONTROL -->
+                            <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10" VerticalAlignment="Center">
+                                <TextBlock Grid.Column="0" Text="RUIDO TÁCTIL (PAPER)" FontSize="7.5" FontWeight="Black" LetterSpacing="1.2" Foreground="#71717A" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <Border Grid.Column="1" Background="#1C1C1E" Padding="2" CornerRadius="6" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="2">
+                                        <ToggleButton Content="SIN RUIDO"
+                                                      IsChecked="{Binding IsGrainNone, Mode=OneWay}"
+                                                      Command="{Binding SwitchGrainLevelCommand}"
+                                                      CommandParameter="0"
+                                                      Height="20"
+                                                      Padding="6,0"
+                                                      CornerRadius="4"
+                                                      FontSize="7.5"
+                                                      FontWeight="Black"
+                                                      BorderThickness="0">
+                                            <ToggleButton.Styles>
+                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                </Style>
+                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                </Style>
+                                            </ToggleButton.Styles>
+                                        </ToggleButton>
+                                        <ToggleButton Content="FINO"
+                                                      IsChecked="{Binding IsGrainFine, Mode=OneWay}"
+                                                      Command="{Binding SwitchGrainLevelCommand}"
+                                                      CommandParameter="1"
+                                                      Height="20"
+                                                      Padding="6,0"
+                                                      CornerRadius="4"
+                                                      FontSize="7.5"
+                                                      FontWeight="Black"
+                                                      BorderThickness="0">
+                                            <ToggleButton.Styles>
+                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                </Style>
+                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                </Style>
+                                            </ToggleButton.Styles>
+                                        </ToggleButton>
+                                        <ToggleButton Content="TÁCTIL"
+                                                      IsChecked="{Binding IsGrainTactile, Mode=OneWay}"
+                                                      Command="{Binding SwitchGrainLevelCommand}"
+                                                      CommandParameter="2"
+                                                      Height="20"
+                                                      Padding="6,0"
+                                                      CornerRadius="4"
+                                                      FontSize="7.5"
+                                                      FontWeight="Black"
+                                                      BorderThickness="0">
+                                            <ToggleButton.Styles>
+                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                </Style>
+                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                </Style>
+                                            </ToggleButton.Styles>
+                                        </ToggleButton>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
                             <!-- Botón de descarga limpio de iconos -->
                             <Button Command="{Binding DownloadSolidColorCommand}"
                                     Background="White"
@@ -593,10 +692,16 @@
             </Grid>
         </Grid>
 
-        <!-- PANEL MODAL: VISTA PREVIA DETALLADA + PALETTE EXTRACTOR -->
+        <!-- PANEL MODAL: VISTA PREVIA DETALLADA + PALETTE EXTRACTOR + PRO TRANSITIONS -->
         <Grid Background="#FC08080C"
               IsVisible="{Binding SelectedWallpaper, Converter={x:Static ObjectConverters.IsNotNull}}"
-              ZIndex="100">
+              ZIndex="100"
+              Opacity="1">
+            <Grid.Transitions>
+                <Transitions>
+                    <DoubleTransition Property="Opacity" Duration="0:0:0.25"/>
+                </Transitions>
+            </Grid.Transitions>
             <Grid RowDefinitions="*,Auto" Margin="25,70,25,25">
                 
                 <!-- PREVISUALIZACIÓN DE IMAGEN -->
@@ -611,6 +716,25 @@
                                Stretch="Uniform"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"/>
+                        
+                        <!-- SIMULADOR DE PANTALLA DE BLOQUEO DE ALTA COSTURA -->
+                        <Grid IsVisible="{Binding IsLockScreenOverlayVisible}"
+                              Background="Transparent"
+                              IsHitTestVisible="False"
+                              VerticalAlignment="Stretch"
+                              HorizontalAlignment="Stretch">
+                            <!-- Lock Icon -->
+                            <TextBlock Text="🔒" FontSize="14" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,35,0,0"/>
+                            
+                            <!-- Dynamic Clock -->
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,65,0,0" Spacing="2">
+                                <TextBlock Text="09:41" FontSize="54" FontWeight="Light" Foreground="White" HorizontalAlignment="Center" LetterSpacing="-0.5" FontFamily="Inter, -apple-system, sans-serif"/>
+                                <TextBlock Text="VIERNES, 23 DE MAYO" FontSize="8.5" FontWeight="Bold" LetterSpacing="2.5" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif"/>
+                            </StackPanel>
+                            
+                            <!-- Bottom Home Swipe Bar -->
+                            <Border Height="3.5" Width="100" Background="White" CornerRadius="1.75" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20" Opacity="0.8"/>
+                        </Grid>
                         
                         <!-- Indicador de carga offline -->
                         <Border Background="#AA08080C"
