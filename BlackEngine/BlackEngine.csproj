@@ -1,10 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <!-- Ícono de la aplicación -->
+        <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
+        <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
     </PropertyGroup>
 
     <ItemGroup>
@@ -18,5 +21,10 @@
             <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
         </PackageReference>
         <PackageReference Include="System.Reflection.TypeExtensions" Version="4.7.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Assets: ícono y recursos gráficos -->
+        <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
 </Project>

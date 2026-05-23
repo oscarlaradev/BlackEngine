@@ -13,9 +13,11 @@
         MinWidth="380"
         MinHeight="650"
         Title="BlackEngine"
+        Icon="/Assets/icon.png"
         Background="{Binding WindowBackgroundString}"
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaTitleBarHeightHint="-1">
+
 
     <Window.DataContext>
         <vm:MainWindowViewModel/>
