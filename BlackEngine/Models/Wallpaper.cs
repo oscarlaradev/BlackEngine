@@ -15,6 +15,7 @@ public class Wallpaper : INotifyPropertyChanged
     public string HighResUrl { get; set; } = string.Empty;
     public string Sha { get; set; } = string.Empty;
     public string Uploader { get; set; } = string.Empty;
+    public string DeviceType { get; set; } = "Móvil";
     private int _likes;
     public int Likes
     {

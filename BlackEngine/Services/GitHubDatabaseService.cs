@@ -145,7 +145,7 @@ public class GitHubDatabaseService
     }
 
     // Subir un nuevo wallpaper a GitHub
-    public async Task<bool> UploadWallpaperAsync(string title, string category, string author, byte[] imageBytes)
+    public async Task<bool> UploadWallpaperAsync(string title, string category, string author, string deviceType, byte[] imageBytes)
     {
         if (string.IsNullOrWhiteSpace(Token)) return false;
 
@@ -192,7 +192,8 @@ public class GitHubDatabaseService
                 HighResUrl = rawImageUrl,
                 Likes = new Random().Next(100, 500),
                 DownloadsCount = 0,
-                Uploader = Username
+                Uploader = Username,
+                DeviceType = deviceType
             };
 
             currentList.Add(newWallpaper);

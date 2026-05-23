@@ -23,36 +23,49 @@
         <!-- CONTENIDO PRINCIPAL -->
         <Grid RowDefinitions="Auto,*" Margin="20,50,20,15">
 
-            <!-- HUD TABS DE NAVEGACIÓN SUPERIOR (ESTILO VERCEL) -->
-            <StackPanel Grid.Row="0" Margin="0,0,0,15">
-                <ListBox ItemsSource="{Binding Tabs}"
+            <!-- CABECERA ULTRA-FINA: TÍTULO, PESTAÑAS Y ICONO AJUSTES -->
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,15">
+                
+                <!-- TÍTULO MINIMALISTA -->
+                <TextBlock Grid.Column="0"
+                           Text="BLACKENGINE"
+                           FontSize="10"
+                           FontWeight="Black"
+                           LetterSpacing="3"
+                           Foreground="White"
+                           VerticalAlignment="Center"/>
+
+                <!-- NAV TABS CENTRALES (GALERÍA & COLOR 3D) -->
+                <ListBox Grid.Column="1"
+                         ItemsSource="{Binding Tabs}"
                          SelectedItem="{Binding SelectedTab, Mode=TwoWay}"
                          Background="Transparent"
                          BorderThickness="0"
-                         Padding="0">
+                         Padding="0"
+                         HorizontalAlignment="Center"
+                         Margin="10,0,10,0">
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <UniformGrid Columns="3"/>
+                            <StackPanel Orientation="Horizontal" Spacing="15"/>
                         </ItemsPanelTemplate>
                     </ListBox.ItemsPanel>
                     <ListBox.Styles>
                         <Style Selector="ListBoxItem">
-                            <Setter Property="Padding" Value="0,12"/>
+                            <Setter Property="Padding" Value="0,6"/>
                             <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="#707070"/>
-                            <Setter Property="FontSize" Value="10"/>
-                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="Foreground" Value="#505050"/>
+                            <Setter Property="FontSize" Value="9"/>
+                            <Setter Property="FontWeight" Value="Black"/>
                             <Setter Property="LetterSpacing" Value="2"/>
-                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
                             <Setter Property="Transitions">
                                 <Transitions>
-                                    <BrushTransition Property="Foreground" Duration="0:0:0.15"/>
+                                    <BrushTransition Property="Foreground" Duration="0:0:0.12"/>
                                 </Transitions>
                             </Setter>
                         </Style>
                         <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
                             <Setter Property="Background" Value="Transparent"/>
-                            <Setter Property="Foreground" Value="#B0B0B0"/>
+                            <Setter Property="Foreground" Value="#909090"/>
                         </Style>
                         <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
                             <Setter Property="Background" Value="Transparent"/>
@@ -64,16 +77,27 @@
                         </Style>
                     </ListBox.Styles>
                 </ListBox>
-                
-                <!-- Línea de corte fina inferior de pestañas -->
-                <Border Height="1" Background="#1C1C1E" Margin="0,5,0,5"/>
-            </StackPanel>
+
+                <!-- BOTÓN AJUSTES TIPOGRÁFICO PREMIUM (Slide Trigger) -->
+                <Button Grid.Column="2"
+                        Command="{Binding ToggleSettingsCommand}"
+                        Background="Transparent"
+                        BorderBrush="#1C1C1E"
+                        BorderThickness="1"
+                        Width="30"
+                        Height="30"
+                        CornerRadius="6"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                    <TextBlock Text="⚙" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Button>
+            </Grid>
 
             <!-- VISTA DE PANELES MULTICAPA -->
             <Grid Grid.Row="1">
 
                 <!-- ================= VISTA 1: GALERÍA ================= -->
-                <Grid RowDefinitions="Auto,Auto,*" IsVisible="{Binding IsGalleryTabVisible}">
+                <Grid RowDefinitions="Auto,Auto,Auto,*" IsVisible="{Binding IsGalleryTabVisible}">
                     
                     <!-- BUSCADOR MINIMALISTA + SPOTLIGHT DIRECT SHORTCUT -->
                     <Border Grid.Row="0"
@@ -82,10 +106,10 @@
                             BorderThickness="1"
                             CornerRadius="8"
                             Padding="12,4"
-                            Margin="0,0,0,10">
+                            Margin="0,0,0,8">
                         <Grid ColumnDefinitions="Auto,*,Auto">
                             <TextBlock Grid.Column="0"
-                                       Text="SEARCH"
+                                       Text="BUSCAR"
                                        Foreground="#505050"
                                        FontSize="9"
                                        FontWeight="Bold"
@@ -102,7 +126,6 @@
                                      Padding="0,6"
                                      VerticalAlignment="Center"/>
                             
-                            <!-- Botón ⌘K directo ultra-pro para abrir Spotlight -->
                             <Button Grid.Column="2"
                                     Command="{Binding ToggleSpotlightCommand}"
                                     Background="#1C1C1E"
@@ -116,11 +139,51 @@
                         </Grid>
                     </Border>
 
+                    <!-- CHIPS DE FILTRO DISPOSITIVO (TODOS, PC, CELULAR) -->
+                    <Border Grid.Row="1" BorderBrush="#1C1C1E" BorderThickness="0,0,0,1" Padding="0,0,0,8" Margin="0,0,0,8">
+                        <Grid ColumnDefinitions="Auto,*">
+                            <TextBlock Grid.Column="0" Text="EQUIPO" FontSize="8" FontWeight="Black" LetterSpacing="1" Foreground="#505050" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <ListBox Grid.Column="1"
+                                     ItemsSource="{Binding DeviceFilters}"
+                                     SelectedItem="{Binding SelectedDeviceFilter, Mode=TwoWay}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Padding="0">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" Spacing="6"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                                <ListBox.Styles>
+                                    <Style Selector="ListBoxItem">
+                                        <Setter Property="Padding" Value="10,4"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="#505050"/>
+                                        <Setter Property="FontSize" Value="9"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="CornerRadius" Value="4"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                        <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    </Style>
+                                    <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#1C1C1E"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Style>
+                                    <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="White"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                        <Setter Property="BorderBrush" Value="White"/>
+                                    </Style>
+                                </ListBox.Styles>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+
                     <!-- CHIPS DE FILTRO DE CATEGORÍAS (ALTO CONTRASTE) -->
-                    <ScrollViewer Grid.Row="1"
+                    <ScrollViewer Grid.Row="2"
                                   HorizontalScrollBarVisibility="Hidden"
                                   VerticalScrollBarVisibility="Disabled"
-                                  Margin="0,0,0,12">
+                                  Margin="0,0,0,10">
                         <ListBox ItemsSource="{Binding Categories}"
                                  SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
                                  Background="Transparent"
@@ -136,18 +199,11 @@
                                     <Setter Property="Padding" Value="12,6"/>
                                     <Setter Property="Background" Value="#121212"/>
                                     <Setter Property="Foreground" Value="#707070"/>
-                                    <Setter Property="FontSize" Value="10"/>
+                                    <Setter Property="FontSize" Value="9"/>
                                     <Setter Property="FontWeight" Value="SemiBold"/>
                                     <Setter Property="CornerRadius" Value="6"/>
                                     <Setter Property="BorderThickness" Value="1"/>
                                     <Setter Property="BorderBrush" Value="#1C1C1E"/>
-                                    <Setter Property="Transitions">
-                                        <Transitions>
-                                            <BrushTransition Property="Background" Duration="0:0:0.12"/>
-                                            <BrushTransition Property="Foreground" Duration="0:0:0.12"/>
-                                            <BrushTransition Property="BorderBrush" Duration="0:0:0.12"/>
-                                        </Transitions>
-                                    </Setter>
                                 </Style>
                                 <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
                                     <Setter Property="Background" Value="#1C1C1E"/>
@@ -159,21 +215,32 @@
                                     <Setter Property="Foreground" Value="Black"/>
                                     <Setter Property="BorderBrush" Value="White"/>
                                 </Style>
-                                <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
-                                    <Setter Property="Background" Value="White"/>
-                                    <Setter Property="Foreground" Value="Black"/>
-                                    <Setter Property="BorderBrush" Value="White"/>
-                                </Style>
                             </ListBox.Styles>
                         </ListBox>
                     </ScrollViewer>
 
+                    <!-- ESTADO VACÍO INICIAL MINIMALISTA -->
+                    <StackPanel Grid.Row="3"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Spacing="12"
+                                IsVisible="{Binding !Wallpapers.Count}">
+                        <TextBlock Text="·" FontSize="36" Foreground="#505050" HorizontalAlignment="Center"/>
+                        <TextBlock Text="GALERÍA VACÍA" FontSize="9" FontWeight="Black" LetterSpacing="2" Foreground="#707070" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Usa ⚙ -> GITHUB CLOUD ENGINE para sincronizar obras reales."
+                                   FontSize="10"
+                                   Foreground="#505050"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"/>
+                    </StackPanel>
+
                     <!-- GRILLA DE IMÁGENES -->
-                    <ListBox Grid.Row="2"
+                    <ListBox Grid.Row="3"
                              ItemsSource="{Binding Wallpapers}"
                              Background="Transparent"
                              BorderThickness="0"
-                             Padding="0">
+                             Padding="0"
+                             IsVisible="{Binding Wallpapers.Count}">
                         <ListBox.Styles>
                             <Style Selector="ListBoxItem">
                                 <Setter Property="Padding" Value="0"/>
@@ -244,7 +311,7 @@
                                                 Background="#EEFF3B30"
                                                 BorderBrush="#FF3B30"
                                                 BorderThickness="1">
-                                            <TextBlock Text="🗑" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <TextBlock Text="×" FontSize="14" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                         </Button>
 
                                         <!-- BOTÓN FAVORITO FLOTANTE -->
@@ -292,17 +359,15 @@
                                                            Margin="0,1,0,0"/>
                                             </StackPanel>
                                             
-                                            <!-- CHIP DE CATEGORÍA -->
-                                            <Border Grid.Column="1"
-                                                    Padding="5,2"
-                                                    Background="#1C1C1E"
-                                                    CornerRadius="4"
-                                                    VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding Category}"
-                                                           FontSize="7"
-                                                           FontWeight="Bold"
-                                                           Foreground="White"/>
-                                            </Border>
+                                            <!-- CHIP DE DISPOSITIVO / CATEGORÍA -->
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                                                <Border Padding="4,2" Background="#1C1C1E" CornerRadius="3">
+                                                    <TextBlock Text="{Binding DeviceType}" FontSize="7" FontWeight="Black" Foreground="#A0A0A0"/>
+                                                </Border>
+                                                <Border Padding="4,2" Background="#2C2C2E" CornerRadius="3">
+                                                    <TextBlock Text="{Binding Category}" FontSize="7" FontWeight="Bold" Foreground="White"/>
+                                                </Border>
+                                            </StackPanel>
                                         </Grid>
                                     </Grid>
                                 </Border>
@@ -374,9 +439,67 @@
                                                FontFamily="monospace"
                                                Margin="0,2,0,0"/>
                                 </StackPanel>
+
+                                <!-- SELECTOR SEGMENTED MULTIDISPOSITIVO (PC | CELULAR) -->
+                                <Border Grid.Column="2"
+                                        Background="#1C1C1E"
+                                        Padding="2"
+                                        CornerRadius="6"
+                                        VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal" Spacing="2">
+                                        <ToggleButton Content="CEL"
+                                                      IsChecked="{Binding IsSolidFormatMobile, Mode=OneWay}"
+                                                      Command="{Binding SwitchSolidFormatCommand}"
+                                                      CommandParameter="Móvil"
+                                                      Height="24"
+                                                      Width="38"
+                                                      CornerRadius="4"
+                                                      FontSize="8"
+                                                      FontWeight="Black"
+                                                      HorizontalAlignment="Stretch"
+                                                      HorizontalContentAlignment="Center"
+                                                      VerticalContentAlignment="Center"
+                                                      BorderThickness="0">
+                                            <ToggleButton.Styles>
+                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                </Style>
+                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                </Style>
+                                            </ToggleButton.Styles>
+                                        </ToggleButton>
+                                        <ToggleButton Content="PC"
+                                                      IsChecked="{Binding IsSolidFormatPc, Mode=OneWay}"
+                                                      Command="{Binding SwitchSolidFormatCommand}"
+                                                      CommandParameter="PC"
+                                                      Height="24"
+                                                      Width="38"
+                                                      CornerRadius="4"
+                                                      FontSize="8"
+                                                      FontWeight="Black"
+                                                      HorizontalAlignment="Stretch"
+                                                      HorizontalContentAlignment="Center"
+                                                      VerticalContentAlignment="Center"
+                                                      BorderThickness="0">
+                                            <ToggleButton.Styles>
+                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                </Style>
+                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="Transparent"/>
+                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                </Style>
+                                            </ToggleButton.Styles>
+                                        </ToggleButton>
+                                    </StackPanel>
+                                </Border>
                             </Grid>
 
-                            <!-- Botón de descarga en blanco y negro de alto contraste -->
+                            <!-- Botón de descarga limpio de iconos -->
                             <Button Command="{Binding DownloadSolidColorCommand}"
                                     Background="White"
                                     Foreground="Black"
@@ -391,321 +514,16 @@
                                         <Setter Property="Foreground" Value="Black"/>
                                     </Style>
                                 </Button.Styles>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock Text="⚡" FontSize="12"/>
-                                    <TextBlock Text="GENERAR WALLPAPER SÓLIDO" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
-                                </StackPanel>
+                                <TextBlock Text="GENERAR WALLPAPER SÓLIDO" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
                             </Button>
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <!-- ================= VISTA 3: CONFIGURACIÓN ================= -->
-                <ScrollViewer IsVisible="{Binding IsSettingsTabVisible}">
-                    <StackPanel Spacing="16" Margin="5,0,5,0">
-                        
-                        <!-- SECCIÓN 0: GITHUB CLOUD ENGINE (BASE DE DATOS Y AUTENTICACIÓN) -->
-                        <Border Background="#121212"
-                                BorderBrush="#1C1C1E"
-                                BorderThickness="1"
-                                CornerRadius="12"
-                                Padding="16">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="GITHUB CLOUD ENGINE" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
-                                
-                                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*">
-                                    <!-- Usuario -->
-                                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,5,8">
-                                        <TextBlock Text="Usuario de GitHub" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <TextBox Text="{Binding GithubUsername, Mode=TwoWay}"
-                                                 PlaceholderText="User..."
-                                                 Height="32"
-                                                 FontSize="11"
-                                                 Background="#1C1C1E"
-                                                 BorderBrush="#252528"
-                                                 Padding="8,5"
-                                                 CornerRadius="6"/>
-                                    </StackPanel>
-                                    
-                                    <!-- Token PAT -->
-                                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0,0,8">
-                                        <TextBlock Text="PAT Token" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <TextBox Text="{Binding GithubToken, Mode=TwoWay}"
-                                                 PasswordChar="●"
-                                                 PlaceholderText="ghp_..."
-                                                 Height="32"
-                                                 FontSize="11"
-                                                 Background="#1C1C1E"
-                                                 BorderBrush="#252528"
-                                                 Padding="8,5"
-                                                 CornerRadius="6"/>
-                                    </StackPanel>
-
-                                    <!-- Repositorio Owner -->
-                                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,5,8">
-                                        <TextBlock Text="Propietario del Repo" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <TextBox Text="{Binding RepoOwner, Mode=TwoWay}"
-                                                 PlaceholderText="Owner..."
-                                                 Height="32"
-                                                 FontSize="11"
-                                                 Background="#1C1C1E"
-                                                 BorderBrush="#252528"
-                                                 Padding="8,5"
-                                                 CornerRadius="6"/>
-                                    </StackPanel>
-
-                                    <!-- Repositorio Nombre -->
-                                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,8">
-                                        <TextBlock Text="Nombre del Repo" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <TextBox Text="{Binding RepoName, Mode=TwoWay}"
-                                                 PlaceholderText="Repo..."
-                                                 Height="32"
-                                                 FontSize="11"
-                                                 Background="#1C1C1E"
-                                                 BorderBrush="#252528"
-                                                 Padding="8,5"
-                                                 CornerRadius="6"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <!-- Estado actual del rol calculated -->
-                                <Border Background="#1C1C1E" CornerRadius="6" Padding="10,8" Margin="0,4,0,4">
-                                    <TextBlock Text="{Binding UserRoleText}"
-                                               FontSize="10"
-                                               FontWeight="Bold"
-                                               Foreground="White"
-                                               HorizontalAlignment="Center"/>
-                                </Border>
-
-                                <Button Command="{Binding AuthenticateGithubCommand}"
-                                        Content="CONECTAR Y SINCRONIZAR NUBE"
-                                        Background="White"
-                                        Foreground="Black"
-                                        Height="38"
-                                        CornerRadius="8"
-                                        HorizontalAlignment="Stretch"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        FontSize="11"
-                                        FontWeight="Bold">
-                                    <Button.Styles>
-                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                            <Setter Property="Background" Value="#E0E0E0"/>
-                                            <Setter Property="Foreground" Value="Black"/>
-                                        </Style>
-                                    </Button.Styles>
-                                </Button>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- SECCIÓN 0.5: HERRAMIENTAS DE CREADOR (SOLO EDITORES Y ADMINS A/B) -->
-                        <Border Background="#121212"
-                                BorderBrush="#1C1C1E"
-                                BorderThickness="1"
-                                CornerRadius="12"
-                                Padding="16"
-                                IsVisible="{Binding IsLevelBOrAbove}">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="HERRAMIENTAS DE CREADOR" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#FF3B30"/>
-                                
-                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*">
-                                    <!-- Título -->
-                                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,5,8">
-                                        <TextBlock Text="Título de Wallpaper" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <TextBox Text="{Binding NewWpTitle, Mode=TwoWay}"
-                                                 PlaceholderText="Ej. Void Line..."
-                                                 Height="32"
-                                                 FontSize="11"
-                                                 Background="#1C1C1E"
-                                                 BorderBrush="#252528"
-                                                 Padding="8,5"
-                                                 CornerRadius="6"/>
-                                    </StackPanel>
-
-                                    <!-- Autor -->
-                                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0,0,8">
-                                        <TextBlock Text="Autor (@crédito)" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <TextBox Text="{Binding NewWpAuthor, Mode=TwoWay}"
-                                                 PlaceholderText="Ej. @artist..."
-                                                 Height="32"
-                                                 FontSize="11"
-                                                 Background="#1C1C1E"
-                                                 BorderBrush="#252528"
-                                                 Padding="8,5"
-                                                 CornerRadius="6"/>
-                                    </StackPanel>
-
-                                    <!-- Categoría -->
-                                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,5,0">
-                                        <TextBlock Text="Categoría" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <ComboBox SelectedItem="{Binding NewWpCategory}"
-                                                  Height="32"
-                                                  HorizontalAlignment="Stretch"
-                                                  Background="#1C1C1E"
-                                                  BorderBrush="#252528"
-                                                  CornerRadius="6"
-                                                  FontSize="11">
-                                            <ComboBoxItem Content="Minimalista"/>
-                                            <ComboBoxItem Content="Arquitectura"/>
-                                            <ComboBoxItem Content="Texturas"/>
-                                            <ComboBoxItem Content="Líneas"/>
-                                        </ComboBox>
-                                    </StackPanel>
-
-                                    <!-- Ruta de archivo -->
-                                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
-                                        <TextBlock Text="Ruta o URL de Imagen" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
-                                        <TextBox Text="{Binding NewWpImagePath, Mode=TwoWay}"
-                                                 PlaceholderText="Ruta/URL..."
-                                                 Height="32"
-                                                 FontSize="11"
-                                                 Background="#1C1C1E"
-                                                 BorderBrush="#252528"
-                                                 Padding="8,5"
-                                                 CornerRadius="6"/>
-                                    </StackPanel>
-                                </Grid>
-
-                                <Button Command="{Binding UploadNewWallpaperCommand}"
-                                        Content="SUBIR A GITHUB CLOUD"
-                                        Background="#FF3B30"
-                                        Foreground="White"
-                                        Height="38"
-                                        CornerRadius="8"
-                                        HorizontalAlignment="Stretch"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalContentAlignment="Center"
-                                        FontSize="11"
-                                        FontWeight="Bold">
-                                    <Button.Styles>
-                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                            <Setter Property="Background" Value="#E03028"/>
-                                            <Setter Property="Foreground" Value="White"/>
-                                        </Style>
-                                    </Button.Styles>
-                                </Button>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- SECCIÓN 1: DESCARGAS -->
-                        <Border Background="#121212"
-                                BorderBrush="#1C1C1E"
-                                BorderThickness="1"
-                                CornerRadius="12"
-                                Padding="16">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="PREFERENCIAS DE DESCARGA" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
-                                
-                                <!-- Calidad -->
-                                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="Resolución de Wallpaper" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
-                                        <TextBlock Text="Calidad de renderizado de color sólido." FontSize="10" Foreground="#707070" Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                    
-                                    <ComboBox Grid.Column="1"
-                                              SelectedItem="{Binding DownloadQuality}"
-                                              Width="110"
-                                              Height="30"
-                                              Background="#1C1C1E"
-                                              BorderBrush="#252528"
-                                              CornerRadius="6"
-                                              FontSize="11">
-                                        <ComboBoxItem Content="Original"/>
-                                        <ComboBoxItem Content="Media"/>
-                                        <ComboBoxItem Content="Baja"/>
-                                    </ComboBox>
-                                </Grid>
-
-                                <Separator Height="1" Background="#1C1C1E"/>
-
-                                <!-- Carpeta física -->
-                                <StackPanel Spacing="4" Margin="0,5,0,0">
-                                    <TextBlock Text="Carpeta de Destino" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
-                                    <Border Background="#1C1C1E"
-                                            BorderBrush="#252528"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Padding="10,8">
-                                        <TextBlock Text="{Binding DownloadPath}"
-                                                   FontSize="10"
-                                                   Foreground="#909090"
-                                                   FontFamily="monospace"
-                                                   TextTrimming="CharacterEllipsis"/>
-                                    </Border>
-                                </StackPanel>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- SECCIÓN 2: ASPECTO -->
-                        <Border Background="#121212"
-                                BorderBrush="#1C1C1E"
-                                BorderThickness="1"
-                                CornerRadius="12"
-                                Padding="16">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="ASPECTO DE APLICACIÓN" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
-                                
-                                <!-- Contrast Toggle -->
-                                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="Negro Absoluto (AMOLED)" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
-                                        <TextBlock Text="Oscurece el fondo a negro puro." FontSize="10" Foreground="#707070" Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                    
-                                    <ToggleSwitch Grid.Column="1"
-                                                  IsChecked="{Binding PureContrastMode, Mode=TwoWay}"
-                                                  OnContent=""
-                                                  OffContent=""
-                                                  MinWidth="0"/>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <!-- SECCIÓN 3: CACHÉ Y MANTENIMIENTO -->
-                        <Border Background="#121212"
-                                BorderBrush="#1C1C1E"
-                                BorderThickness="1"
-                                CornerRadius="12"
-                                Padding="16">
-                            <StackPanel Spacing="12">
-                                <TextBlock Text="MANTENIMIENTO DE CACHÉ" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
-                                
-                                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
-                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
-                                        <TextBlock Text="Tamaño Utilizado" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
-                                        <TextBlock Text="{Binding CacheSizeText}" FontSize="11" Foreground="#909090" Margin="0,2,0,0"/>
-                                    </StackPanel>
-                                    
-                                    <Button Grid.Column="1"
-                                            Command="{Binding ClearCacheCommand}"
-                                            Content="LIMPIAR"
-                                            Background="Transparent"
-                                            BorderBrush="#FF3B30"
-                                            BorderThickness="1"
-                                            Foreground="#FF3B30"
-                                            FontSize="10"
-                                            FontWeight="Bold"
-                                            Padding="12,6"
-                                            CornerRadius="6">
-                                        <Button.Styles>
-                                            <Style Selector="Button:pointerover /template/ ContentPresenter">
-                                                <Setter Property="Background" Value="#1AFF3B30"/>
-                                                <Setter Property="BorderBrush" Value="#FF3B30"/>
-                                                <Setter Property="Foreground" Value="#FF3B30"/>
-                                            </Style>
-                                        </Button.Styles>
-                                    </Button>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </ScrollViewer>
-
             </Grid>
         </Grid>
 
-        <!-- PANEL MODAL: VISTA PREVIA DETALLADA (BLANCO Y NEGRO DE ALTO CONTRASTE) -->
+        <!-- PANEL MODAL: VISTA PREVIA DETALLADA + PALETTE EXTRACTOR -->
         <Grid Background="#FC08080C"
               IsVisible="{Binding SelectedWallpaper, Converter={x:Static ObjectConverters.IsNotNull}}"
               ZIndex="100">
@@ -737,7 +555,7 @@
                 </Border>
 
                 <!-- PANEL HUD INFERIOR DE DETALLE -->
-                <StackPanel Grid.Row="1" Margin="0,20,0,0" Spacing="15">
+                <StackPanel Grid.Row="1" Margin="0,20,0,0" Spacing="12">
                     
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel Grid.Column="0">
@@ -759,14 +577,48 @@
                                 <TextBlock Text="{Binding SelectedWallpaper.Likes}" Foreground="#707070" FontSize="12"/>
                             </StackPanel>
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <TextBlock Text="⬇" Foreground="White" FontSize="14" Margin="0,0,4,0"/>
+                                <TextBlock Text="↓" Foreground="White" FontSize="14" Margin="0,0,4,0"/>
                                 <TextBlock Text="{Binding SelectedWallpaper.DownloadsCount}" Foreground="#707070" FontSize="12"/>
                             </StackPanel>
                         </StackPanel>
                     </Grid>
 
+                    <!-- INNOVACIÓN EXCLUSIVA: PALETTE EXTRACTOR (EXTRACTOR DE PALETA ARMÓNICA) -->
+                    <StackPanel Spacing="6" Margin="0,4,0,4">
+                        <TextBlock Text="PALETA CROMÁTICA ARMÓNICA (CLICA PARA CARGAR EN RUEDA 3D)"
+                                   FontSize="8"
+                                   FontWeight="Bold"
+                                   LetterSpacing="1.2"
+                                   Foreground="#606060"/>
+                        <ItemsControl ItemsSource="{Binding ExtractedColors}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="8"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding #RootWindow.DataContext.ApplyExtractedColorCommand}"
+                                            CommandParameter="{Binding}"
+                                            Width="46"
+                                            Height="28"
+                                            CornerRadius="6"
+                                            Background="{Binding}"
+                                            BorderBrush="#252528"
+                                            BorderThickness="1">
+                                        <Button.Styles>
+                                            <Style Selector="Button:pointerover">
+                                                <Setter Property="BorderBrush" Value="White"/>
+                                            </Style>
+                                        </Button.Styles>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
                     <Grid ColumnDefinitions="*,Auto,Auto">
-                        <!-- BOTÓN DESCARGAR (Puro minimalismo blanco) -->
+                        <!-- BOTÓN DESCARGAR -->
                         <Button Grid.Column="0"
                                 Command="{Binding DownloadCommand}"
                                 CommandParameter="{Binding SelectedWallpaper}"
@@ -785,7 +637,7 @@
                                 </Style>
                             </Button.Styles>
                             <StackPanel Orientation="Horizontal" Spacing="8">
-                                <TextBlock Text="⬇" FontSize="12" FontWeight="Bold"/>
+                                <TextBlock Text="↓" FontSize="12" FontWeight="Bold"/>
                                 <TextBlock Text="DESCARGAR WALLPAPER" FontSize="11" FontWeight="Bold" LetterSpacing="0.5"/>
                             </StackPanel>
                         </Button>
@@ -846,18 +698,16 @@
             </Grid>
         </Grid>
 
-        <!-- ================= SPOTLIGHT COMMAND CENTER OVERLAY (INNOVACIÓN PRO) ================= -->
+        <!-- ================= SPOTLIGHT COMMAND CENTER OVERLAY ================= -->
         <Grid Background="#D8000000"
               IsVisible="{Binding IsSpotlightOpen}"
               ZIndex="150">
-            <!-- Clic fuera para cerrar -->
             <Button Background="Transparent"
                     BorderThickness="0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     Command="{Binding ToggleSpotlightCommand}"/>
 
-            <!-- Contenedor flotante Spotight (Raycast Style) -->
             <Border Width="380"
                     Height="420"
                     Background="#121212"
@@ -869,8 +719,6 @@
                     VerticalAlignment="Center"
                     Margin="0,0,0,100">
                 <Grid RowDefinitions="Auto,Auto,*">
-                    
-                    <!-- Input de Búsqueda de Comandos -->
                     <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="16,14,16,10">
                         <TextBox Grid.Column="0"
                                  PlaceholderText="Escribe un comando o acción..."
@@ -880,9 +728,7 @@
                                  Foreground="White"
                                  FontSize="13"
                                  FontWeight="Medium"
-                                 Padding="0,6"
-                                 Focusable="True"
-                                 x:Name="SpotlightSearchBox"/>
+                                 Padding="0,6"/>
                         <TextBlock Grid.Column="1"
                                    Text="⌘K"
                                    Foreground="#505050"
@@ -893,7 +739,6 @@
                     
                     <Border Grid.Row="1" Height="1" Background="#1C1C1E" Margin="0,0,0,8"/>
 
-                    <!-- Lista de Acciones Filtradas -->
                     <ListBox Grid.Row="2"
                              ItemsSource="{Binding SpotlightActions}"
                              Background="Transparent"
@@ -928,13 +773,11 @@
                                         </Style>
                                     </Button.Styles>
                                     <Grid ColumnDefinitions="*,Auto">
-                                        <!-- Info Acción -->
                                         <StackPanel Grid.Column="0" Spacing="2">
                                             <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
                                             <TextBlock Text="{Binding Category}" FontSize="8" FontWeight="Bold" Foreground="#707070" LetterSpacing="0.5"/>
                                         </StackPanel>
                                         
-                                        <!-- Keycap Shortcut -->
                                         <Border Grid.Column="1"
                                                 Background="#252528"
                                                 CornerRadius="4"
@@ -951,7 +794,285 @@
             </Border>
         </Grid>
 
-        <!-- AVISO TOAST FLOTANTE MINIMALISTA (Blanco y Negro Puro) -->
+        <!-- ================= ADJUSTES COLLAPSIBLE SETTINGS DRAWER (INNOVACIÓN PRO) ================= -->
+        <Grid Background="#70000000"
+              IsVisible="{Binding IsSettingsOpen}"
+              ZIndex="120">
+            
+            <!-- Clic fuera del Drawer para cerrar -->
+            <Button Background="Transparent"
+                    BorderThickness="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{Binding ToggleSettingsCommand}"/>
+
+            <!-- Panel Lateral Deslizable (Settings Drawer) -->
+            <Border Width="325"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch"
+                    Background="#EC08080C"
+                    BorderBrush="#1C1C1E"
+                    BorderThickness="1,0,0,0"
+                    Padding="20,55,20,20"
+                    BoxShadow="-15 0 35 0 #80000000">
+                
+                <Grid RowDefinitions="Auto,*">
+                    <!-- Cabecera del Drawer -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,15">
+                        <TextBlock Grid.Column="0"
+                                   Text="CONFIGURACIÓN"
+                                   FontSize="10"
+                                   FontWeight="Black"
+                                   LetterSpacing="2"
+                                   Foreground="White"
+                                   VerticalAlignment="Center"/>
+                        
+                        <Button Grid.Column="1"
+                                Command="{Binding ToggleSettingsCommand}"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Padding="4">
+                            <TextBlock Text="×" FontSize="18" FontWeight="Black" Foreground="#707070" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Button>
+                    </Grid>
+
+                    <!-- Scroll de Opciones -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Spacing="16">
+                            
+                            <!-- SECCIÓN 0: GITHUB CLOUD ENGINE -->
+                            <Border Background="#121212"
+                                    BorderBrush="#1C1C1E"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="14">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="NUBE GITHUB" FontSize="8" FontWeight="Black" LetterSpacing="2" Foreground="#707070"/>
+                                    
+                                    <StackPanel Spacing="8">
+                                        <StackPanel>
+                                            <TextBlock Text="Usuario de GitHub" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding GithubUsername, Mode=TwoWay}" PlaceholderText="User..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Token PAT" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding GithubToken, Mode=TwoWay}" PasswordChar="●" PlaceholderText="ghp_..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Propietario del Repo" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding RepoOwner, Mode=TwoWay}" PlaceholderText="Owner..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Nombre del Repo" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding RepoName, Mode=TwoWay}" PlaceholderText="Repo..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Privilegio actual calculado -->
+                                    <Border Background="#1C1C1E" CornerRadius="5" Padding="8" Margin="0,4,0,4">
+                                        <TextBlock Text="{Binding UserRoleText}" FontSize="8" FontWeight="Black" Foreground="White" HorizontalAlignment="Center"/>
+                                    </Border>
+
+                                    <Button Command="{Binding AuthenticateGithubCommand}"
+                                            Content="CONECTAR NUBE"
+                                            Background="White"
+                                            Foreground="Black"
+                                            Height="35"
+                                            CornerRadius="6"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            FontSize="10"
+                                            FontWeight="Bold">
+                                        <Button.Styles>
+                                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="#E0E0E0"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                            </Style>
+                                        </Button.Styles>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- SECCIÓN 0.5: HERRAMIENTAS DE CREADOR (EDITORES Y ADMINS A/B) -->
+                            <Border Background="#121212"
+                                    BorderBrush="#1C1C1E"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="14"
+                                    IsVisible="{Binding IsLevelBOrAbove}">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="CREADOR ENGINE" FontSize="8" FontWeight="Black" LetterSpacing="2" Foreground="#FF3B30"/>
+                                    
+                                    <StackPanel Spacing="8">
+                                        <StackPanel>
+                                            <TextBlock Text="Título del Wallpaper" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding NewWpTitle, Mode=TwoWay}" PlaceholderText="Ej. Brutalism..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Autor (@crédito)" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding NewWpAuthor, Mode=TwoWay}" PlaceholderText="Ej. @creador..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
+
+                                        <Grid ColumnDefinitions="*,*">
+                                            <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                                                <TextBlock Text="Categoría" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                                <ComboBox SelectedItem="{Binding NewWpCategory}" Height="30" HorizontalAlignment="Stretch" Background="#1C1C1E" BorderBrush="#252528" CornerRadius="5" FontSize="10">
+                                                    <ComboBoxItem Content="Minimalista"/>
+                                                    <ComboBoxItem Content="Arquitectura"/>
+                                                    <ComboBoxItem Content="Texturas"/>
+                                                    <ComboBoxItem Content="Líneas"/>
+                                                </ComboBox>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="1" Margin="4,0,0,0">
+                                                <TextBlock Text="Dispositivo" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                                <ComboBox SelectedItem="{Binding NewWpDeviceType}" Height="30" HorizontalAlignment="Stretch" Background="#1C1C1E" BorderBrush="#252528" CornerRadius="5" FontSize="10">
+                                                    <ComboBoxItem Content="Móvil"/>
+                                                    <ComboBoxItem Content="PC"/>
+                                                </ComboBox>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Ruta local o URL web" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding NewWpImagePath, Mode=TwoWay}" PlaceholderText="Ruta/URL..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <Button Command="{Binding UploadNewWallpaperCommand}"
+                                            Content="PUBLICAR EN NUBE"
+                                            Background="#FF3B30"
+                                            Foreground="White"
+                                            Height="35"
+                                            CornerRadius="6"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"
+                                            FontSize="10"
+                                            FontWeight="Bold">
+                                        <Button.Styles>
+                                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="#E03028"/>
+                                                <Setter Property="Foreground" Value="White"/>
+                                            </Style>
+                                        </Button.Styles>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- SECCIÓN 1: PREFERENCIAS DE DESCARGA -->
+                            <Border Background="#121212"
+                                    BorderBrush="#1C1C1E"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="14">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="DESCARGAS" FontSize="8" FontWeight="Black" LetterSpacing="2" Foreground="#707070"/>
+                                    
+                                    <Grid ColumnDefinitions="*,Auto" Margin="0,2,0,2">
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="Resolución" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                            <TextBlock Text="Calidad de sólidos." FontSize="9" Foreground="#606060" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        
+                                        <ComboBox Grid.Column="1"
+                                                  SelectedItem="{Binding DownloadQuality}"
+                                                  Width="95"
+                                                  Height="28"
+                                                  Background="#1C1C1E"
+                                                  BorderBrush="#252528"
+                                                  CornerRadius="5"
+                                                  FontSize="10">
+                                            <ComboBoxItem Content="Original"/>
+                                            <ComboBoxItem Content="Media"/>
+                                            <ComboBoxItem Content="Baja"/>
+                                        </ComboBox>
+                                    </Grid>
+
+                                    <Separator Height="1" Background="#1C1C1E"/>
+
+                                    <StackPanel Spacing="3" Margin="0,2,0,0">
+                                        <TextBlock Text="Carpeta física de guardado" FontSize="11" FontWeight="SemiBold" Foreground="White"/>
+                                        <Border Background="#1C1C1E" BorderBrush="#252528" BorderThickness="1" CornerRadius="5" Padding="8,6">
+                                            <TextBlock Text="{Binding DownloadPath}" FontSize="9" Foreground="#808080" FontFamily="monospace" TextTrimming="CharacterEllipsis"/>
+                                        </Border>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- SECCIÓN 2: ASPECTO -->
+                            <Border Background="#121212"
+                                    BorderBrush="#1C1C1E"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="14">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="TEMA DE APLICACIÓN" FontSize="8" FontWeight="Black" LetterSpacing="2" Foreground="#707070"/>
+                                    
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="Negro AMOLED" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                            <TextBlock Text="Fondo oscuro absoluto." FontSize="9" Foreground="#606060" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        
+                                        <ToggleSwitch Grid.Column="1"
+                                                      IsChecked="{Binding PureContrastMode, Mode=TwoWay}"
+                                                      OnContent=""
+                                                      OffContent=""
+                                                      MinWidth="0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- SECCIÓN 3: CACHÉ -->
+                            <Border Background="#121212"
+                                    BorderBrush="#1C1C1E"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="14">
+                                <StackPanel Spacing="10">
+                                    <TextBlock Text="MANTENIMIENTO" FontSize="8" FontWeight="Black" LetterSpacing="2" Foreground="#707070"/>
+                                    
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                            <TextBlock Text="Tamaño de Caché" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                            <TextBlock Text="{Binding CacheSizeText}" FontSize="10" Foreground="#808080" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        
+                                        <Button Grid.Column="1"
+                                                Command="{Binding ClearCacheCommand}"
+                                                Content="LIMPIAR"
+                                                Background="Transparent"
+                                                BorderBrush="#FF3B30"
+                                                BorderThickness="1"
+                                                Foreground="#FF3B30"
+                                                FontSize="9"
+                                                FontWeight="Bold"
+                                                Padding="10,5"
+                                                CornerRadius="5">
+                                            <Button.Styles>
+                                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="#1AFF3B30"/>
+                                                    <Setter Property="BorderBrush" Value="#FF3B30"/>
+                                                    <Setter Property="Foreground" Value="#FF3B30"/>
+                                                </Style>
+                                            </Button.Styles>
+                                        </Button>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- BANNER DE NOTIFICACIONES TOAST MINIMALISTA -->
         <Border VerticalAlignment="Top"
                 HorizontalAlignment="Center"
                 Margin="0,60,0,0"
