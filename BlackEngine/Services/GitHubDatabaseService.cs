@@ -47,6 +47,31 @@ public class GitHubDatabaseService
         try
         {
             SetupHeaders();
+            
+            // 1. Validar el token contra el perfil de usuario de GitHub para asegurar autenticidad
+            var userResponse = await _client.GetAsync("https://api.github.com/user");
+            if (!userResponse.IsSuccessStatusCode)
+            {
+                return "C"; // Token no válido
+            }
+
+            var userContent = await userResponse.Content.ReadAsStringAsync();
+            using var userDoc = JsonDocument.Parse(userContent);
+            var login = userDoc.RootElement.GetProperty("login").GetString() ?? string.Empty;
+
+            // Asegurar que el usuario autenticado coincide con el ingresado en la interfaz
+            if (!login.Equals(Username, StringComparison.OrdinalIgnoreCase))
+            {
+                return "C";
+            }
+
+            // 2. Si el usuario coincide con el propietario del repositorio, es Creador (Nivel A) por definición
+            if (Username.Equals(RepoOwner, StringComparison.OrdinalIgnoreCase))
+            {
+                return "A";
+            }
+
+            // 3. De lo contrario, verificar sus permisos colaborativos específicos en el repositorio
             var url = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/collaborators/{Username}/permission";
             var response = await _client.GetAsync(url);
             
