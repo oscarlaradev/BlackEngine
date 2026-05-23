@@ -1,0 +1,973 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:BlackEngine.ViewModels"
+        xmlns:controls="using:BlackEngine.Controls"
+        mc:Ignorable="d"
+        x:Class="BlackEngine.MainWindow"
+        x:CompileBindings="False"
+        x:Name="RootWindow"
+        Width="450"
+        Height="800"
+        Title="BlackEngine"
+        Background="{Binding WindowBackgroundString}"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaTitleBarHeightHint="-1">
+
+    <Window.DataContext>
+        <vm:MainWindowViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <!-- CONTENIDO PRINCIPAL -->
+        <Grid RowDefinitions="Auto,*" Margin="20,50,20,15">
+
+            <!-- HUD TABS DE NAVEGACIÓN SUPERIOR (ESTILO VERCEL) -->
+            <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                <ListBox ItemsSource="{Binding Tabs}"
+                         SelectedItem="{Binding SelectedTab, Mode=TwoWay}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Padding="0">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3"/>
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="Padding" Value="0,12"/>
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#707070"/>
+                            <Setter Property="FontSize" Value="10"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="LetterSpacing" Value="2"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                            <Setter Property="Transitions">
+                                <Transitions>
+                                    <BrushTransition Property="Foreground" Duration="0:0:0.15"/>
+                                </Transitions>
+                            </Setter>
+                        </Style>
+                        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="#B0B0B0"/>
+                        </Style>
+                        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Style>
+                        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Foreground" Value="White"/>
+                        </Style>
+                    </ListBox.Styles>
+                </ListBox>
+                
+                <!-- Línea de corte fina inferior de pestañas -->
+                <Border Height="1" Background="#1C1C1E" Margin="0,5,0,5"/>
+            </StackPanel>
+
+            <!-- VISTA DE PANELES MULTICAPA -->
+            <Grid Grid.Row="1">
+
+                <!-- ================= VISTA 1: GALERÍA ================= -->
+                <Grid RowDefinitions="Auto,Auto,*" IsVisible="{Binding IsGalleryTabVisible}">
+                    
+                    <!-- BUSCADOR MINIMALISTA + SPOTLIGHT DIRECT SHORTCUT -->
+                    <Border Grid.Row="0"
+                            Background="#121212"
+                            BorderBrush="#1C1C1E"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Padding="12,4"
+                            Margin="0,0,0,10">
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="SEARCH"
+                                       Foreground="#505050"
+                                       FontSize="9"
+                                       FontWeight="Bold"
+                                       LetterSpacing="1"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,12,0"/>
+                            <TextBox Grid.Column="1"
+                                     PlaceholderText="Buscar obras o autores..."
+                                     Text="{Binding SearchText, Mode=TwoWay}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Foreground="White"
+                                     FontSize="13"
+                                     Padding="0,6"
+                                     VerticalAlignment="Center"/>
+                            
+                            <!-- Botón ⌘K directo ultra-pro para abrir Spotlight -->
+                            <Button Grid.Column="2"
+                                    Command="{Binding ToggleSpotlightCommand}"
+                                    Background="#1C1C1E"
+                                    BorderBrush="#252528"
+                                    BorderThickness="1"
+                                    Padding="8,4"
+                                    CornerRadius="4"
+                                    VerticalAlignment="Center">
+                                <TextBlock Text="⌘K" FontSize="8" FontWeight="Black" Foreground="White"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <!-- CHIPS DE FILTRO DE CATEGORÍAS (ALTO CONTRASTE) -->
+                    <ScrollViewer Grid.Row="1"
+                                  HorizontalScrollBarVisibility="Hidden"
+                                  VerticalScrollBarVisibility="Disabled"
+                                  Margin="0,0,0,12">
+                        <ListBox ItemsSource="{Binding Categories}"
+                                 SelectedItem="{Binding SelectedCategory, Mode=TwoWay}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Padding="0">
+                            <ListBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" Spacing="6"/>
+                                </ItemsPanelTemplate>
+                            </ListBox.ItemsPanel>
+                            <ListBox.Styles>
+                                <Style Selector="ListBoxItem">
+                                    <Setter Property="Padding" Value="12,6"/>
+                                    <Setter Property="Background" Value="#121212"/>
+                                    <Setter Property="Foreground" Value="#707070"/>
+                                    <Setter Property="FontSize" Value="10"/>
+                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                    <Setter Property="CornerRadius" Value="6"/>
+                                    <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    <Setter Property="Transitions">
+                                        <Transitions>
+                                            <BrushTransition Property="Background" Duration="0:0:0.12"/>
+                                            <BrushTransition Property="Foreground" Duration="0:0:0.12"/>
+                                            <BrushTransition Property="BorderBrush" Duration="0:0:0.12"/>
+                                        </Transitions>
+                                    </Setter>
+                                </Style>
+                                <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#1C1C1E"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="#252528"/>
+                                </Style>
+                                <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                </Style>
+                                <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                </Style>
+                            </ListBox.Styles>
+                        </ListBox>
+                    </ScrollViewer>
+
+                    <!-- GRILLA DE IMÁGENES -->
+                    <ListBox Grid.Row="2"
+                             ItemsSource="{Binding Wallpapers}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Padding="0">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2"/>
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Height="285"
+                                        Margin="5"
+                                        CornerRadius="12"
+                                        ClipToBounds="True"
+                                        Background="#121212"
+                                        BorderBrush="#1C1C1E"
+                                        BorderThickness="1">
+                                    <Grid>
+                                        <!-- CLIC EN IMAGEN -->
+                                        <Button Command="{Binding #RootWindow.DataContext.SelectWallpaperCommand}"
+                                                CommandParameter="{Binding}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                Padding="0"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                HorizontalContentAlignment="Stretch"
+                                                VerticalContentAlignment="Stretch">
+                                            <Grid>
+                                                <!-- IMAGEN -->
+                                                <Image Source="{Binding ImageBitmap}"
+                                                       Stretch="UniformToFill"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                                
+                                                <!-- DEGRADADO INFERIOR DE PROTECCIÓN -->
+                                                <Border VerticalAlignment="Bottom" Height="80">
+                                                    <Border.Background>
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Color="#00000000" Offset="0"/>
+                                                            <GradientStop Color="#EE08080A" Offset="1"/>
+                                                        </LinearGradientBrush>
+                                                    </Border.Background>
+                                                </Border>
+                                            </Grid>
+                                        </Button>
+
+                                        <!-- PAPELERA ADMINISTRATIVA FLOTANTE (SOLO VISIBLE PARA NIVEL A: CREADOR) -->
+                                        <Button Command="{Binding #RootWindow.DataContext.DeleteWallpaperCommand}"
+                                                CommandParameter="{Binding}"
+                                                IsVisible="{Binding #RootWindow.DataContext.IsLevelA}"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Top"
+                                                Margin="8"
+                                                Width="30"
+                                                Height="30"
+                                                CornerRadius="6"
+                                                Background="#EEFF3B30"
+                                                BorderBrush="#FF3B30"
+                                                BorderThickness="1">
+                                            <TextBlock Text="🗑" FontSize="11" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Button>
+
+                                        <!-- BOTÓN FAVORITO FLOTANTE -->
+                                        <ToggleButton IsChecked="{Binding IsFavorite, Mode=TwoWay}"
+                                                      Command="{Binding #RootWindow.DataContext.ToggleFavoriteCommand}"
+                                                      CommandParameter="{Binding}"
+                                                      HorizontalAlignment="Right"
+                                                      VerticalAlignment="Top"
+                                                      Margin="8"
+                                                      Width="30"
+                                                      Height="30"
+                                                      CornerRadius="6"
+                                                      Background="#CC08080C"
+                                                      BorderBrush="#1C1C1E"
+                                                      BorderThickness="1">
+                                            <ToggleButton.Styles>
+                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="White"/>
+                                                    <Setter Property="Foreground" Value="Black"/>
+                                                    <Setter Property="BorderBrush" Value="White"/>
+                                                </Style>
+                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                                    <Setter Property="Background" Value="#CC08080C"/>
+                                                    <Setter Property="Foreground" Value="#707070"/>
+                                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                                </Style>
+                                            </ToggleButton.Styles>
+                                            <TextBlock Text="❤" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </ToggleButton>
+
+                                        <!-- DETALLES DE CARTA -->
+                                        <Grid VerticalAlignment="Bottom"
+                                              Margin="10"
+                                              ColumnDefinitions="*,Auto"
+                                              IsHitTestVisible="False">
+                                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontSize="12"
+                                                           FontWeight="Bold"
+                                                           Foreground="White"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding Author}"
+                                                           FontSize="9"
+                                                           Foreground="#707070"
+                                                           Margin="0,1,0,0"/>
+                                            </StackPanel>
+                                            
+                                            <!-- CHIP DE CATEGORÍA -->
+                                            <Border Grid.Column="1"
+                                                    Padding="5,2"
+                                                    Background="#1C1C1E"
+                                                    CornerRadius="4"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Category}"
+                                                           FontSize="7"
+                                                           FontWeight="Bold"
+                                                           Foreground="White"/>
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+
+                <!-- ================= VISTA 2: COLOR WHEEL 3D ================= -->
+                <Grid RowDefinitions="Auto,*,Auto" IsVisible="{Binding IsColorTabVisible}" Margin="10,0,10,0">
+                    
+                    <!-- TEXTO DE INSTRUCCIONES -->
+                    <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,5,0,0">
+                        <TextBlock Text="COLOR SPHERE 3D"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   LetterSpacing="3"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Arrastra para rotar la esfera. Clica una partícula para seleccionar."
+                                   FontSize="11"
+                                   Foreground="#707070"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- CONTENEDOR CENTRAL DE LA RUEDA 3D -->
+                    <Border Grid.Row="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Width="330"
+                            Height="330"
+                            Background="Transparent">
+                        <controls:ColorWheelControl SelectedColor="{Binding SelectedSolidColor, Mode=TwoWay}"
+                                                   HorizontalAlignment="Stretch"
+                                                   VerticalAlignment="Stretch"/>
+                    </Border>
+
+                    <!-- CONTROLES HUD DEL COLOR SELECCIONADO -->
+                    <Border Grid.Row="2"
+                            Background="#121212"
+                            BorderBrush="#1C1C1E"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="16"
+                            Margin="0,0,0,10">
+                        <StackPanel Spacing="15">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                
+                                <!-- Muestra de color circular -->
+                                <Border Grid.Column="0"
+                                        Width="40"
+                                        Height="40"
+                                        CornerRadius="20"
+                                        Background="{Binding SelectedSolidColorBrush}"
+                                        BorderBrush="#1C1C1E"
+                                        BorderThickness="1"/>
+                                
+                                <StackPanel Grid.Column="1" Margin="15,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="COLOR SÓLIDO SELECCIONADO"
+                                               FontSize="8"
+                                               FontWeight="Bold"
+                                               LetterSpacing="1.5"
+                                               Foreground="#707070"/>
+                                    <TextBlock Text="{Binding HexColorString}"
+                                               FontSize="18"
+                                               FontWeight="Light"
+                                               Foreground="White"
+                                               FontFamily="monospace"
+                                               Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Botón de descarga en blanco y negro de alto contraste -->
+                            <Button Command="{Binding DownloadSolidColorCommand}"
+                                    Background="White"
+                                    Foreground="Black"
+                                    Height="45"
+                                    CornerRadius="8"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center">
+                                <Button.Styles>
+                                    <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                        <Setter Property="Background" Value="#E0E0E0"/>
+                                        <Setter Property="Foreground" Value="Black"/>
+                                    </Style>
+                                </Button.Styles>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="⚡" FontSize="12"/>
+                                    <TextBlock Text="GENERAR WALLPAPER SÓLIDO" FontSize="11" FontWeight="Bold" LetterSpacing="1"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <!-- ================= VISTA 3: CONFIGURACIÓN ================= -->
+                <ScrollViewer IsVisible="{Binding IsSettingsTabVisible}">
+                    <StackPanel Spacing="16" Margin="5,0,5,0">
+                        
+                        <!-- SECCIÓN 0: GITHUB CLOUD ENGINE (BASE DE DATOS Y AUTENTICACIÓN) -->
+                        <Border Background="#121212"
+                                BorderBrush="#1C1C1E"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="16">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="GITHUB CLOUD ENGINE" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
+                                
+                                <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,*">
+                                    <!-- Usuario -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,5,8">
+                                        <TextBlock Text="Usuario de GitHub" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding GithubUsername, Mode=TwoWay}"
+                                                 PlaceholderText="User..."
+                                                 Height="32"
+                                                 FontSize="11"
+                                                 Background="#1C1C1E"
+                                                 BorderBrush="#252528"
+                                                 Padding="8,5"
+                                                 CornerRadius="6"/>
+                                    </StackPanel>
+                                    
+                                    <!-- Token PAT -->
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0,0,8">
+                                        <TextBlock Text="PAT Token" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding GithubToken, Mode=TwoWay}"
+                                                 PasswordChar="●"
+                                                 PlaceholderText="ghp_..."
+                                                 Height="32"
+                                                 FontSize="11"
+                                                 Background="#1C1C1E"
+                                                 BorderBrush="#252528"
+                                                 Padding="8,5"
+                                                 CornerRadius="6"/>
+                                    </StackPanel>
+
+                                    <!-- Repositorio Owner -->
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,5,8">
+                                        <TextBlock Text="Propietario del Repo" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding RepoOwner, Mode=TwoWay}"
+                                                 PlaceholderText="Owner..."
+                                                 Height="32"
+                                                 FontSize="11"
+                                                 Background="#1C1C1E"
+                                                 BorderBrush="#252528"
+                                                 Padding="8,5"
+                                                 CornerRadius="6"/>
+                                    </StackPanel>
+
+                                    <!-- Repositorio Nombre -->
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,8">
+                                        <TextBlock Text="Nombre del Repo" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding RepoName, Mode=TwoWay}"
+                                                 PlaceholderText="Repo..."
+                                                 Height="32"
+                                                 FontSize="11"
+                                                 Background="#1C1C1E"
+                                                 BorderBrush="#252528"
+                                                 Padding="8,5"
+                                                 CornerRadius="6"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <!-- Estado actual del rol calculated -->
+                                <Border Background="#1C1C1E" CornerRadius="6" Padding="10,8" Margin="0,4,0,4">
+                                    <TextBlock Text="{Binding UserRoleText}"
+                                               FontSize="10"
+                                               FontWeight="Bold"
+                                               Foreground="White"
+                                               HorizontalAlignment="Center"/>
+                                </Border>
+
+                                <Button Command="{Binding AuthenticateGithubCommand}"
+                                        Content="CONECTAR Y SINCRONIZAR NUBE"
+                                        Background="White"
+                                        Foreground="Black"
+                                        Height="38"
+                                        CornerRadius="8"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        FontSize="11"
+                                        FontWeight="Bold">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#E0E0E0"/>
+                                            <Setter Property="Foreground" Value="Black"/>
+                                        </Style>
+                                    </Button.Styles>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- SECCIÓN 0.5: HERRAMIENTAS DE CREADOR (SOLO EDITORES Y ADMINS A/B) -->
+                        <Border Background="#121212"
+                                BorderBrush="#1C1C1E"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="16"
+                                IsVisible="{Binding IsLevelBOrAbove}">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="HERRAMIENTAS DE CREADOR" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#FF3B30"/>
+                                
+                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*">
+                                    <!-- Título -->
+                                    <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,5,8">
+                                        <TextBlock Text="Título de Wallpaper" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding NewWpTitle, Mode=TwoWay}"
+                                                 PlaceholderText="Ej. Void Line..."
+                                                 Height="32"
+                                                 FontSize="11"
+                                                 Background="#1C1C1E"
+                                                 BorderBrush="#252528"
+                                                 Padding="8,5"
+                                                 CornerRadius="6"/>
+                                    </StackPanel>
+
+                                    <!-- Autor -->
+                                    <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0,0,8">
+                                        <TextBlock Text="Autor (@crédito)" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding NewWpAuthor, Mode=TwoWay}"
+                                                 PlaceholderText="Ej. @artist..."
+                                                 Height="32"
+                                                 FontSize="11"
+                                                 Background="#1C1C1E"
+                                                 BorderBrush="#252528"
+                                                 Padding="8,5"
+                                                 CornerRadius="6"/>
+                                    </StackPanel>
+
+                                    <!-- Categoría -->
+                                    <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,5,0">
+                                        <TextBlock Text="Categoría" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <ComboBox SelectedItem="{Binding NewWpCategory}"
+                                                  Height="32"
+                                                  HorizontalAlignment="Stretch"
+                                                  Background="#1C1C1E"
+                                                  BorderBrush="#252528"
+                                                  CornerRadius="6"
+                                                  FontSize="11">
+                                            <ComboBoxItem Content="Minimalista"/>
+                                            <ComboBoxItem Content="Arquitectura"/>
+                                            <ComboBoxItem Content="Texturas"/>
+                                            <ComboBoxItem Content="Líneas"/>
+                                        </ComboBox>
+                                    </StackPanel>
+
+                                    <!-- Ruta de archivo -->
+                                    <StackPanel Grid.Row="1" Grid.Column="1" Margin="5,0,0,0">
+                                        <TextBlock Text="Ruta o URL de Imagen" FontSize="10" Foreground="#808080" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding NewWpImagePath, Mode=TwoWay}"
+                                                 PlaceholderText="Ruta/URL..."
+                                                 Height="32"
+                                                 FontSize="11"
+                                                 Background="#1C1C1E"
+                                                 BorderBrush="#252528"
+                                                 Padding="8,5"
+                                                 CornerRadius="6"/>
+                                    </StackPanel>
+                                </Grid>
+
+                                <Button Command="{Binding UploadNewWallpaperCommand}"
+                                        Content="SUBIR A GITHUB CLOUD"
+                                        Background="#FF3B30"
+                                        Foreground="White"
+                                        Height="38"
+                                        CornerRadius="8"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        FontSize="11"
+                                        FontWeight="Bold">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#E03028"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Style>
+                                    </Button.Styles>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- SECCIÓN 1: DESCARGAS -->
+                        <Border Background="#121212"
+                                BorderBrush="#1C1C1E"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="16">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="PREFERENCIAS DE DESCARGA" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
+                                
+                                <!-- Calidad -->
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,5">
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="Resolución de Wallpaper" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                        <TextBlock Text="Calidad de renderizado de color sólido." FontSize="10" Foreground="#707070" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <ComboBox Grid.Column="1"
+                                              SelectedItem="{Binding DownloadQuality}"
+                                              Width="110"
+                                              Height="30"
+                                              Background="#1C1C1E"
+                                              BorderBrush="#252528"
+                                              CornerRadius="6"
+                                              FontSize="11">
+                                        <ComboBoxItem Content="Original"/>
+                                        <ComboBoxItem Content="Media"/>
+                                        <ComboBoxItem Content="Baja"/>
+                                    </ComboBox>
+                                </Grid>
+
+                                <Separator Height="1" Background="#1C1C1E"/>
+
+                                <!-- Carpeta física -->
+                                <StackPanel Spacing="4" Margin="0,5,0,0">
+                                    <TextBlock Text="Carpeta de Destino" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                    <Border Background="#1C1C1E"
+                                            BorderBrush="#252528"
+                                            BorderThickness="1"
+                                            CornerRadius="6"
+                                            Padding="10,8">
+                                        <TextBlock Text="{Binding DownloadPath}"
+                                                   FontSize="10"
+                                                   Foreground="#909090"
+                                                   FontFamily="monospace"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                    </Border>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- SECCIÓN 2: ASPECTO -->
+                        <Border Background="#121212"
+                                BorderBrush="#1C1C1E"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="16">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="ASPECTO DE APLICACIÓN" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
+                                
+                                <!-- Contrast Toggle -->
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="Negro Absoluto (AMOLED)" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                        <TextBlock Text="Oscurece el fondo a negro puro." FontSize="10" Foreground="#707070" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <ToggleSwitch Grid.Column="1"
+                                                  IsChecked="{Binding PureContrastMode, Mode=TwoWay}"
+                                                  OnContent=""
+                                                  OffContent=""
+                                                  MinWidth="0"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- SECCIÓN 3: CACHÉ Y MANTENIMIENTO -->
+                        <Border Background="#121212"
+                                BorderBrush="#1C1C1E"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="16">
+                            <StackPanel Spacing="12">
+                                <TextBlock Text="MANTENIMIENTO DE CACHÉ" FontSize="9" FontWeight="Bold" LetterSpacing="2" Foreground="#707070"/>
+                                
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,5,0,0">
+                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                        <TextBlock Text="Tamaño Utilizado" FontSize="13" FontWeight="SemiBold" Foreground="White"/>
+                                        <TextBlock Text="{Binding CacheSizeText}" FontSize="11" Foreground="#909090" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    
+                                    <Button Grid.Column="1"
+                                            Command="{Binding ClearCacheCommand}"
+                                            Content="LIMPIAR"
+                                            Background="Transparent"
+                                            BorderBrush="#FF3B30"
+                                            BorderThickness="1"
+                                            Foreground="#FF3B30"
+                                            FontSize="10"
+                                            FontWeight="Bold"
+                                            Padding="12,6"
+                                            CornerRadius="6">
+                                        <Button.Styles>
+                                            <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                <Setter Property="Background" Value="#1AFF3B30"/>
+                                                <Setter Property="BorderBrush" Value="#FF3B30"/>
+                                                <Setter Property="Foreground" Value="#FF3B30"/>
+                                            </Style>
+                                        </Button.Styles>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+            </Grid>
+        </Grid>
+
+        <!-- PANEL MODAL: VISTA PREVIA DETALLADA (BLANCO Y NEGRO DE ALTO CONTRASTE) -->
+        <Grid Background="#FC08080C"
+              IsVisible="{Binding SelectedWallpaper, Converter={x:Static ObjectConverters.IsNotNull}}"
+              ZIndex="100">
+            <Grid RowDefinitions="*,Auto" Margin="25,70,25,25">
+                
+                <!-- PREVISUALIZACIÓN DE IMAGEN -->
+                <Border Grid.Row="0"
+                        CornerRadius="14"
+                        ClipToBounds="True"
+                        Background="#121212"
+                        BorderBrush="#1C1C1E"
+                        BorderThickness="1">
+                    <Grid>
+                        <Image Source="{Binding SelectedWallpaper.ImageBitmap}"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+                        
+                        <!-- Indicador de carga offline -->
+                        <Border Background="#AA08080C"
+                                CornerRadius="8"
+                                Padding="10,6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                IsVisible="{Binding SelectedWallpaper.ImageBitmap, Converter={x:Static ObjectConverters.IsNull}}">
+                            <TextBlock Text="Cargando..." Foreground="#909090" FontSize="12"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- PANEL HUD INFERIOR DE DETALLE -->
+                <StackPanel Grid.Row="1" Margin="0,20,0,0" Spacing="15">
+                    
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="{Binding SelectedWallpaper.Title}"
+                                       FontSize="20"
+                                       FontWeight="Black"
+                                       Foreground="White"/>
+                            <TextBlock Text="{Binding SelectedWallpaper.Author}"
+                                       FontSize="13"
+                                       Foreground="#8E8E93"
+                                       FontWeight="Medium"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                        
+                        <!-- Estadísticas B&W -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="12">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="❤" Foreground="White" FontSize="14" Margin="0,0,4,0"/>
+                                <TextBlock Text="{Binding SelectedWallpaper.Likes}" Foreground="#707070" FontSize="12"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="⬇" Foreground="White" FontSize="14" Margin="0,0,4,0"/>
+                                <TextBlock Text="{Binding SelectedWallpaper.DownloadsCount}" Foreground="#707070" FontSize="12"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,Auto,Auto">
+                        <!-- BOTÓN DESCARGAR (Puro minimalismo blanco) -->
+                        <Button Grid.Column="0"
+                                Command="{Binding DownloadCommand}"
+                                CommandParameter="{Binding SelectedWallpaper}"
+                                Background="White"
+                                Foreground="Black"
+                                Height="45"
+                                CornerRadius="8"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#E0E0E0"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                            </Button.Styles>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="⬇" FontSize="12" FontWeight="Bold"/>
+                                <TextBlock Text="DESCARGAR WALLPAPER" FontSize="11" FontWeight="Bold" LetterSpacing="0.5"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Toggle de favorito -->
+                        <ToggleButton Grid.Column="1"
+                                      IsChecked="{Binding SelectedWallpaper.IsFavorite, Mode=TwoWay}"
+                                      Command="{Binding ToggleFavoriteCommand}"
+                                      CommandParameter="{Binding SelectedWallpaper}"
+                                      Width="45"
+                                      Height="45"
+                                      CornerRadius="8"
+                                      Margin="0,0,8,0"
+                                      Background="#121212"
+                                      BorderBrush="#1C1C1E"
+                                      BorderThickness="1">
+                            <ToggleButton.Styles>
+                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="White"/>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Setter Property="Foreground" Value="Black"/>
+                                </Style>
+                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#121212"/>
+                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </ToggleButton.Styles>
+                            <TextBlock Text="❤" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+
+                        <!-- Botón cerrar -->
+                        <Button Grid.Column="2"
+                                Command="{Binding ClosePreviewCommand}"
+                                Content="CERRAR"
+                                Background="#121212"
+                                Foreground="White"
+                                BorderBrush="#1C1C1E"
+                                BorderThickness="1"
+                                FontWeight="Bold"
+                                FontSize="11"
+                                LetterSpacing="0.5"
+                                Width="85"
+                                Height="45"
+                                CornerRadius="8"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center">
+                            <Button.Styles>
+                                <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                    <Setter Property="Background" Value="#1C1C1E"/>
+                                    <Setter Property="BorderBrush" Value="#252528"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Style>
+                            </Button.Styles>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <!-- ================= SPOTLIGHT COMMAND CENTER OVERLAY (INNOVACIÓN PRO) ================= -->
+        <Grid Background="#D8000000"
+              IsVisible="{Binding IsSpotlightOpen}"
+              ZIndex="150">
+            <!-- Clic fuera para cerrar -->
+            <Button Background="Transparent"
+                    BorderThickness="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Command="{Binding ToggleSpotlightCommand}"/>
+
+            <!-- Contenedor flotante Spotight (Raycast Style) -->
+            <Border Width="380"
+                    Height="420"
+                    Background="#121212"
+                    BorderBrush="#252528"
+                    BorderThickness="1"
+                    CornerRadius="14"
+                    BoxShadow="0 15 40 0 #A0000000"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="0,0,0,100">
+                <Grid RowDefinitions="Auto,Auto,*">
+                    
+                    <!-- Input de Búsqueda de Comandos -->
+                    <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="16,14,16,10">
+                        <TextBox Grid.Column="0"
+                                 PlaceholderText="Escribe un comando o acción..."
+                                 Text="{Binding SpotlightQuery, Mode=TwoWay}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 Foreground="White"
+                                 FontSize="13"
+                                 FontWeight="Medium"
+                                 Padding="0,6"
+                                 Focusable="True"
+                                 x:Name="SpotlightSearchBox"/>
+                        <TextBlock Grid.Column="1"
+                                   Text="⌘K"
+                                   Foreground="#505050"
+                                   FontSize="10"
+                                   FontWeight="Bold"
+                                   VerticalAlignment="Center"/>
+                    </Grid>
+                    
+                    <Border Grid.Row="1" Height="1" Background="#1C1C1E" Margin="0,0,0,8"/>
+
+                    <!-- Lista de Acciones Filtradas -->
+                    <ListBox Grid.Row="2"
+                             ItemsSource="{Binding SpotlightActions}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Padding="8,0,8,8">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="Padding" Value="0"/>
+                                <Setter Property="Margin" Value="0,2"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                            <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+                                <Setter Property="Background" Value="Transparent"/>
+                            </Style>
+                        </ListBox.Styles>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding #RootWindow.DataContext.ExecuteSpotlightActionCommand}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        CornerRadius="8"
+                                        Padding="10,8"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch">
+                                    <Button.Styles>
+                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                            <Setter Property="Background" Value="#1C1C1E"/>
+                                        </Style>
+                                    </Button.Styles>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <!-- Info Acción -->
+                                        <StackPanel Grid.Column="0" Spacing="2">
+                                            <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="SemiBold" Foreground="White"/>
+                                            <TextBlock Text="{Binding Category}" FontSize="8" FontWeight="Bold" Foreground="#707070" LetterSpacing="0.5"/>
+                                        </StackPanel>
+                                        
+                                        <!-- Keycap Shortcut -->
+                                        <Border Grid.Column="1"
+                                                Background="#252528"
+                                                CornerRadius="4"
+                                                Padding="6,3"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding ShortcutText}" FontSize="8" FontWeight="Black" Foreground="#A0A0A0"/>
+                                        </Border>
+                                    </Grid>
+                                </Button>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- AVISO TOAST FLOTANTE MINIMALISTA (Blanco y Negro Puro) -->
+        <Border VerticalAlignment="Top"
+                HorizontalAlignment="Center"
+                Margin="0,60,0,0"
+                Background="#121212"
+                BorderBrush="White"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="16,8"
+                ZIndex="200"
+                IsVisible="{Binding IsToastVisible}"
+                BoxShadow="0 4 15 0 #90000000">
+            <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <TextBlock Text="⚡" Foreground="White" FontSize="13"/>
+                <TextBlock Text="{Binding ToastMessage}" Foreground="White" FontSize="11" FontWeight="Bold" LetterSpacing="0.5"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+
+</Window>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="BlackEngine/App.axaml" value="BlackEngine/BlackEngine.csproj" />
+        <entry key="BlackEngine/MainWindow.axaml" value="BlackEngine/BlackEngine.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
