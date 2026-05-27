@@ -29,6 +29,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
 {
     private readonly List<Wallpaper> _allWallpapers = new();
     private readonly GitHubDatabaseService _gitHubService;
+    private readonly AIVisionService _aiService;
+    private readonly LocalStorageService _localStorage;
     private readonly List<SpotlightAction> _masterActions = new();
 
     // Colecciones observables
@@ -114,8 +116,21 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             _selectedWallpaper = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(SelectedWpDimensions));
+            OnPropertyChanged(nameof(SelectedWpMood));
+            OnPropertyChanged(nameof(SelectedWpColorEnergy));
+            
+            // Evaluamos la forma para la "Smart Preview"
+            IsDesktopWallpaperSelected = value != null && (value.DeviceType.Equals("Desktop", StringComparison.OrdinalIgnoreCase) || value.DeviceType.Equals("PC", StringComparison.OrdinalIgnoreCase) || value.DeviceType.Equals("Mac", StringComparison.OrdinalIgnoreCase));
+            IsMobileWallpaperSelected = value != null && !IsDesktopWallpaperSelected;
+            
+            OnPropertyChanged(nameof(IsDesktopWallpaperSelected));
+            OnPropertyChanged(nameof(IsMobileWallpaperSelected));
         }
     }
+    
+    public bool IsDesktopWallpaperSelected { get; private set; }
+    public bool IsMobileWallpaperSelected { get; private set; }
 
     private Color _selectedSolidColor = Color.Parse("#FFFFFF");
     public Color SelectedSolidColor
@@ -488,6 +503,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             _githubUsername = value;
             OnPropertyChanged();
+            SaveSettings();
         }
     }
 
@@ -499,6 +515,20 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             _githubToken = value;
             OnPropertyChanged();
+            SaveSettings();
+        }
+    }
+    
+    private string _geminiToken = string.Empty;
+    public string GeminiToken
+    {
+        get => _geminiToken;
+        set
+        {
+            _geminiToken = value;
+            OnPropertyChanged();
+            _aiService.SetApiKey(value);
+            SaveSettings();
         }
     }
 
@@ -510,6 +540,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             _repoOwner = value;
             OnPropertyChanged();
+            SaveSettings();
         }
     }
 
@@ -521,6 +552,22 @@ public class MainWindowViewModel : INotifyPropertyChanged
         {
             _repoName = value;
             OnPropertyChanged();
+            SaveSettings();
+        }
+    }
+
+    private void SaveSettings()
+    {
+        if (_localStorage != null)
+        {
+            _localStorage.SaveSettings(new AppSettings
+            {
+                GithubUsername = GithubUsername,
+                GithubToken = GithubToken,
+                GeminiToken = GeminiToken,
+                GithubRepoOwner = RepoOwner,
+                GithubRepoName = RepoName
+            });
         }
     }
 
@@ -691,6 +738,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     public ICommand ExecuteSpotlightActionCommand { get; }
     public ICommand AuthenticateGithubCommand { get; }
     public ICommand UploadNewWallpaperCommand { get; }
+    public ICommand SelectLocalFileCommand { get; }
     public ICommand DeleteWallpaperCommand { get; }
     public ICommand ApplyExtractedColorCommand { get; }
     public ICommand SwitchSolidFormatCommand { get; }
@@ -713,6 +761,30 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         // Instanciar servicio descentralizado
         _gitHubService = new GitHubDatabaseService();
+        _aiService = new AIVisionService();
+        _localStorage = new LocalStorageService();
+
+        var settings = _localStorage.LoadSettings();
+        if (!string.IsNullOrEmpty(settings.GithubUsername)) _githubUsername = settings.GithubUsername;
+        if (!string.IsNullOrEmpty(settings.GithubToken)) _githubToken = settings.GithubToken;
+        if (!string.IsNullOrEmpty(settings.GithubRepoOwner)) _repoOwner = settings.GithubRepoOwner;
+        if (!string.IsNullOrEmpty(settings.GithubRepoName)) _repoName = settings.GithubRepoName;
+        if (!string.IsNullOrEmpty(settings.GeminiToken))
+        {
+            _geminiToken = settings.GeminiToken;
+            _aiService.SetApiKey(_geminiToken);
+        }
+
+        // Configurar credenciales iniciales para GitHub
+        _gitHubService.Token = _githubToken;
+        _gitHubService.Username = _githubUsername;
+        _gitHubService.RepoOwner = _repoOwner;
+        _gitHubService.RepoName = _repoName;
+
+        if (!string.IsNullOrEmpty(_githubToken) && !string.IsNullOrEmpty(_githubUsername))
+        {
+            _ = AuthenticateGithubAsync(); // Validar silenciosamente el token en fondo
+        }
 
         // Inicializar Comandos Estándar
         SwitchTabCommand = new RelayCommand<string>(tab => SelectedTab = tab ?? "GALERÍA");
@@ -729,6 +801,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
         ExecuteSpotlightActionCommand = new RelayCommand<SpotlightAction>(ExecuteSpotlightAction);
         AuthenticateGithubCommand = new RelayCommand<object>(async _ => await AuthenticateGithubAsync());
         UploadNewWallpaperCommand = new RelayCommand<object>(async _ => await UploadNewWallpaperAsync());
+        SelectLocalFileCommand = new RelayCommand<object>(async _ => await SelectLocalFileAsync());
         DeleteWallpaperCommand = new RelayCommand<Wallpaper>(async wp => await DeleteWallpaperAsync(wp));
         ApplyExtractedColorCommand = new RelayCommand<Color>(color => ApplyExtractedColor((Color)color));
         SwitchSolidFormatCommand = new RelayCommand<string>(fmt => SolidColorFormat = fmt ?? "Móvil");
@@ -921,6 +994,73 @@ public class MainWindowViewModel : INotifyPropertyChanged
         catch (Exception ex)
         {
             ShowToast($"Error de subida: {ex.Message}");
+        }
+    }
+
+    private async Task SelectLocalFileAsync()
+    {
+        try
+        {
+            var mainWindow = (App.Current?.ApplicationLifetime as Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            if (mainWindow == null)
+            {
+                ShowToast("No se pudo obtener la ventana principal.");
+                return;
+            }
+
+            var options = new Avalonia.Platform.Storage.FilePickerOpenOptions
+            {
+                Title = "Seleccionar Imagen de Fondo",
+                AllowMultiple = false,
+                FileTypeFilter = new[] { Avalonia.Platform.Storage.FilePickerFileTypes.ImageAll }
+            };
+
+            var files = await mainWindow.StorageProvider.OpenFilePickerAsync(options);
+            if (files != null && files.Count > 0)
+            {
+                var filePath = files[0].Path.LocalPath;
+                filePath = Uri.UnescapeDataString(filePath);
+                NewWpImagePath = filePath;
+                ShowToast("Imagen local seleccionada.");
+
+                if (_aiService.IsConfigured)
+                {
+                    ShowToast("Analizando imagen con IA...");
+                    try
+                    {
+                        var bytes = await File.ReadAllBytesAsync(filePath);
+                        var extension = Path.GetExtension(filePath).ToLowerInvariant();
+                        var mime = extension == ".png" ? "image/png" : 
+                                   (extension == ".webp" ? "image/webp" : "image/jpeg");
+                                   
+                        var metadata = await _aiService.AnalyzeWallpaperAsync(bytes, mime);
+                        if (metadata != null)
+                        {
+                            NewWpTitle = metadata.Title;
+                            NewWpAuthor = metadata.Author;
+                            NewWpCategory = metadata.Category;
+                            NewWpDeviceType = metadata.DeviceType;
+                            ShowToast("¡Metadatos generados por IA!");
+                        }
+                        else
+                        {
+                            ShowToast("La IA no pudo entender la imagen.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowToast("Error en IA: " + ex.Message);
+                    }
+                }
+                else
+                {
+                    ShowToast("API Key de Gemini no configurada. (Sin IA)");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowToast($"Error al abrir el selector: {ex.Message}");
         }
     }
 

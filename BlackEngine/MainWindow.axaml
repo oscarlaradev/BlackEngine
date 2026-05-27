@@ -347,21 +347,30 @@
                         </ListBox.Styles>
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <UniformGrid Columns="2"/>
+                                <WrapPanel ItemWidth="240" Margin="0" HorizontalAlignment="Center"/>
                             </ItemsPanelTemplate>
                         </ListBox.ItemsPanel>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
+                                <!-- Premium Glassmorphic Card -->
                                 <Border Classes="WpCard"
-                                        Height="285"
-                                        Margin="6"
-                                        CornerRadius="14"
+                                        Height="360"
+                                        Margin="10"
+                                        CornerRadius="18"
                                         ClipToBounds="True"
-                                        Background="#09090B"
-                                        BorderBrush="#18181B"
-                                        BorderThickness="1">
+                                        Background="#101014"
+                                        BorderBrush="#1C1C1E"
+                                        BorderThickness="1"
+                                        BoxShadow="0 15 40 -10 #A0000000">
+                                    <Border.Transitions>
+                                        <Transitions>
+                                            <ThicknessTransition Property="Margin" Duration="0:0:0.2"/>
+                                            <BrushTransition Property="BorderBrush" Duration="0:0:0.2"/>
+                                        </Transitions>
+                                    </Border.Transitions>
+                                    
                                     <Grid>
-                                        <!-- CLIC EN IMAGEN -->
+                                        <!-- CLIC EN IMAGEN (Main Wallpaper) -->
                                         <Button Command="{Binding #RootWindow.DataContext.SelectWallpaperCommand}"
                                                 CommandParameter="{Binding}"
                                                 Background="Transparent"
@@ -372,92 +381,93 @@
                                                 HorizontalContentAlignment="Stretch"
                                                 VerticalContentAlignment="Stretch">
                                             <Grid>
-                                                <!-- IMAGEN -->
                                                 <Image Source="{Binding ImageBitmap}"
                                                        Stretch="UniformToFill"
                                                        HorizontalAlignment="Center"
                                                        VerticalAlignment="Center"/>
                                                 
-                                                <!-- DEGRADADO INFERIOR DE PROTECCIÓN -->
-                                                <Border VerticalAlignment="Bottom" Height="80">
+                                                <!-- Premium Shadow Gradient (Bottom) -->
+                                                <Border VerticalAlignment="Bottom" Height="140">
                                                     <Border.Background>
                                                         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                             <GradientStop Color="#00000000" Offset="0"/>
-                                                            <GradientStop Color="#EE08080A" Offset="1"/>
+                                                            <GradientStop Color="#EE000000" Offset="0.8"/>
+                                                            <GradientStop Color="#FF000000" Offset="1"/>
                                                         </LinearGradientBrush>
                                                     </Border.Background>
                                                 </Border>
                                             </Grid>
                                         </Button>
 
-                                        <!-- PAPELERA ADMINISTRATIVA FLOTANTE (SOLO VISIBLE PARA NIVEL A: CREADOR) -->
-                                        <Button Command="{Binding #RootWindow.DataContext.DeleteWallpaperCommand}"
-                                                CommandParameter="{Binding}"
-                                                IsVisible="{Binding #RootWindow.DataContext.IsLevelA}"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Top"
-                                                Margin="8"
-                                                Width="30"
-                                                Height="30"
-                                                CornerRadius="6"
-                                                Background="#EEFF3B30"
-                                                BorderBrush="#FF3B30"
-                                                BorderThickness="1">
-                                            <TextBlock Text="×" FontSize="14" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </Button>
+                                        <!-- ACTION BAR (Top) - Glassmorphism -->
+                                        <Grid VerticalAlignment="Top" Margin="12" ColumnDefinitions="Auto,*,Auto">
+                                            
+                                            <!-- Delete (Trash) - Minimalist Icon -->
+                                            <Button Grid.Column="0"
+                                                    Command="{Binding #RootWindow.DataContext.DeleteWallpaperCommand}"
+                                                    CommandParameter="{Binding}"
+                                                    IsVisible="{Binding #RootWindow.DataContext.IsLevelA}"
+                                                    Width="32" Height="32" CornerRadius="16"
+                                                    Background="#801C1C1E" BorderBrush="#30FFFFFF" BorderThickness="1"
+                                                    ToolTip.Tip="Eliminar de la nube">
+                                                <PathIcon Data="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" 
+                                                          Foreground="#FF453A" Width="14" Height="14"/>
+                                                <Button.Styles>
+                                                    <Style Selector="Button:pointerover">
+                                                        <Setter Property="Background" Value="#CCFF453A"/>
+                                                    </Style>
+                                                    <Style Selector="Button:pointerover PathIcon">
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Style>
+                                                </Button.Styles>
+                                            </Button>
+                                            
+                                            <!-- Favorite (Heart) - Minimalist Icon -->
+                                            <ToggleButton Grid.Column="2"
+                                                          IsChecked="{Binding IsFavorite, Mode=TwoWay}"
+                                                          Command="{Binding #RootWindow.DataContext.ToggleFavoriteCommand}"
+                                                          CommandParameter="{Binding}"
+                                                          Width="32" Height="32" CornerRadius="16"
+                                                          Background="#801C1C1E" BorderBrush="#30FFFFFF" BorderThickness="1">
+                                                <ToggleButton.Styles>
+                                                    <Style Selector="ToggleButton:checked">
+                                                        <Setter Property="Background" Value="#FFFF453A"/>
+                                                        <Setter Property="BorderBrush" Value="#FFFF453A"/>
+                                                    </Style>
+                                                    <Style Selector="ToggleButton:checked PathIcon">
+                                                        <Setter Property="Foreground" Value="White"/>
+                                                    </Style>
+                                                </ToggleButton.Styles>
+                                                <!-- SVG Path for Heart -->
+                                                <PathIcon Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" 
+                                                          Foreground="#EBEBF5" Width="14" Height="14"/>
+                                            </ToggleButton>
+                                        </Grid>
 
-                                        <!-- BOTÓN FAVORITO FLOTANTE -->
-                                        <ToggleButton IsChecked="{Binding IsFavorite, Mode=TwoWay}"
-                                                      Command="{Binding #RootWindow.DataContext.ToggleFavoriteCommand}"
-                                                      CommandParameter="{Binding}"
-                                                      HorizontalAlignment="Right"
-                                                      VerticalAlignment="Top"
-                                                      Margin="8"
-                                                      Width="30"
-                                                      Height="30"
-                                                      CornerRadius="6"
-                                                      Background="#CC08080C"
-                                                      BorderBrush="#1C1C1E"
-                                                      BorderThickness="1">
-                                            <ToggleButton.Styles>
-                                                <Style Selector="ToggleButton:checked /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="White"/>
-                                                    <Setter Property="Foreground" Value="Black"/>
-                                                    <Setter Property="BorderBrush" Value="White"/>
-                                                </Style>
-                                                <Style Selector="ToggleButton:not(:checked) /template/ ContentPresenter">
-                                                    <Setter Property="Background" Value="#CC08080C"/>
-                                                    <Setter Property="Foreground" Value="#707070"/>
-                                                    <Setter Property="BorderBrush" Value="#1C1C1E"/>
-                                                </Style>
-                                            </ToggleButton.Styles>
-                                            <TextBlock Text="❤" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                        </ToggleButton>
-
-                                        <!-- DETALLES DE CARTA -->
-                                        <Grid VerticalAlignment="Bottom"
-                                              Margin="10"
-                                              ColumnDefinitions="*,Auto"
-                                              IsHitTestVisible="False">
+                                        <!-- BOTTOM METADATA -->
+                                        <Grid VerticalAlignment="Bottom" Margin="14" ColumnDefinitions="*,Auto" IsHitTestVisible="False">
                                             <StackPanel Grid.Column="0" VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding Title}"
-                                                           FontSize="12"
-                                                           FontWeight="Bold"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"
                                                            Foreground="White"
-                                                           TextTrimming="CharacterEllipsis"/>
+                                                           LetterSpacing="0.3"
+                                                           TextTrimming="CharacterEllipsis"
+                                                           FontFamily="Inter, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif"/>
                                                 <TextBlock Text="{Binding Author}"
-                                                           FontSize="9"
-                                                           Foreground="#707070"
-                                                           Margin="0,1,0,0"/>
+                                                           FontSize="11"
+                                                           Foreground="#A0A0A5"
+                                                           FontWeight="Regular"
+                                                           Margin="0,2,0,0"/>
                                             </StackPanel>
                                             
-                                            <!-- CHIP DE DISPOSITIVO / CATEGORÍA -->
-                                            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
-                                                <Border Padding="4,2" Background="#1C1C1E" CornerRadius="3">
-                                                    <TextBlock Text="{Binding DeviceType}" FontSize="7" FontWeight="Black" Foreground="#A0A0A0"/>
+                                            <!-- TAGS -->
+                                            <StackPanel Grid.Column="1" Orientation="Vertical" Spacing="4" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                                <Border Padding="6,2" Background="#801C1C1E" BorderBrush="#30FFFFFF" BorderThickness="1" CornerRadius="4">
+                                                    <TextBlock Text="{Binding DeviceType}" FontSize="8" FontWeight="SemiBold" Foreground="#EBEBF5"/>
                                                 </Border>
-                                                <Border Padding="4,2" Background="#2C2C2E" CornerRadius="3">
-                                                    <TextBlock Text="{Binding Category}" FontSize="7" FontWeight="Bold" Foreground="White"/>
+                                                <Border Padding="6,2" Background="#80007AFF" BorderBrush="#30FFFFFF" BorderThickness="1" CornerRadius="4">
+                                                    <TextBlock Text="{Binding Category}" FontSize="8" FontWeight="SemiBold" Foreground="White"/>
                                                 </Border>
                                             </StackPanel>
                                         </Grid>
@@ -834,54 +844,24 @@
             </Grid.Transitions>
             <Grid RowDefinitions="*,Auto" Margin="25,70,25,25">
                 
-                <!-- PREVISUALIZACIÓN DE IMAGEN -->
+                <!-- PREVISUALIZACIÓN DE IMAGEN INTELIGENTE (SMART PREVIEW) -->
                 <Border Grid.Row="0"
-                        CornerRadius="14"
-                        ClipToBounds="True"
-                        Background="#121212"
+                        Background="#0A0A0C"
                         BorderBrush="#1C1C1E"
-                        BorderThickness="1">
+                        BorderThickness="1"
+                        CornerRadius="16"
+                        ClipToBounds="True">
                     <Grid>
-                        <Image Source="{Binding SelectedWallpaper.ImageBitmap}"
-                               Stretch="Uniform"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"/>
-
-                        <!-- CUADRÍCULA DE COMPOSICIÓN TÉCNICA / REGLA DE TERCIOS (📐) -->
-                        <Grid IsVisible="{Binding IsCompositionGridVisible}"
-                              Background="Transparent"
-                              IsHitTestVisible="False"
-                              VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch">
-                            <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*">
-                                <Border Grid.Row="0" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
-                                <Border Grid.Row="0" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
-                                <Border Grid.Row="0" Grid.Column="2" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.25"/>
-                                
-                                <Border Grid.Row="1" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
-                                <Border Grid.Row="1" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,1,1" Opacity="0.25"/>
-                                <Border Grid.Row="1" Grid.Column="2" BorderBrush="White" BorderThickness="0,0,0,1" Opacity="0.25"/>
-                                
-                                <Border Grid.Row="2" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,1,0" Opacity="0.25"/>
-                                <Border Grid.Row="2" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,1,0" Opacity="0.25"/>
-                            </Grid>
-
-                            <!-- Visor Retículo Central Brutalista -->
-                            <Ellipse Width="30" Height="30" Stroke="White" StrokeThickness="1" StrokeDashArray="2,2" Opacity="0.4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <Line StartPoint="-10,0" EndPoint="10,0" Stroke="White" StrokeThickness="1.5" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            <Line StartPoint="0,-10" EndPoint="0,10" Stroke="White" StrokeThickness="1.5" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Grid>
-
-                        <!-- CAJÓN DE ESPECIFICACIONES TÉCNICAS BLUEPRINT (ⓘ) -->
+                        <!-- CAJÓN DE ESPECIFICACIONES TÉCNICAS BLUEPRINT (ⓘ) (Nivel Superior) -->
                         <Border HorizontalAlignment="Right"
                                 VerticalAlignment="Stretch"
                                 Width="260"
                                 Background="#F208080C"
                                 BorderBrush="#1C1C1E"
                                 BorderThickness="1,0,0,0"
+                                ZIndex="100"
                                 IsVisible="{Binding IsTechSpecsDrawerOpen}">
                             <Grid RowDefinitions="Auto,*" Margin="20">
-                                <!-- Cabecera Blueprint -->
                                 <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
                                     <StackPanel Grid.Column="0" Spacing="4">
                                         <TextBlock Text="TECHNICAL BLUEPRINT" FontSize="8" FontWeight="Black" LetterSpacing="2" Foreground="#8E8E93"/>
@@ -898,7 +878,6 @@
                                     </Button>
                                 </Grid>
                                 
-                                <!-- Contenido Specs -->
                                 <ScrollViewer Grid.Row="1">
                                     <StackPanel Spacing="20">
                                         <!-- Dimensión -->
@@ -940,7 +919,6 @@
                                             <Border Background="#121214" BorderBrush="#1C1C1E" BorderThickness="1" CornerRadius="6" Padding="12,10">
                                                 <StackPanel Spacing="4">
                                                     <TextBlock Text="{Binding SelectedWpColorEnergy}" FontSize="11" FontWeight="Bold" Foreground="White" FontFamily="monospace"/>
-                                                    <!-- Minimal Horizontal Progress Bar -->
                                                     <ProgressBar Value="75" Height="2" Minimum="0" Maximum="100" Background="#1C1C1E" Foreground="White" IsIndeterminate="False"/>
                                                     <TextBlock Text="Distribución de peso visual sRGB" FontSize="8" Foreground="#606062"/>
                                                 </StackPanel>
@@ -951,80 +929,109 @@
                             </Grid>
                         </Border>
 
-                        
-                        <!-- SIMULADOR DE PANTALLA DE BLOQUEO DE ALTA COSTURA (📱) -->
-                        <Grid IsVisible="{Binding IsLockScreenOverlayVisible}"
-                              Background="Transparent"
-                              IsHitTestVisible="False"
-                              VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch">
-                            <!-- Lock Icon -->
-                            <TextBlock Text="🔒" FontSize="14" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,35,0,0"/>
-                            
-                            <!-- Dynamic Clock -->
-                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,65,0,0" Spacing="2">
-                                <TextBlock Text="09:41" FontSize="54" FontWeight="Light" Foreground="White" HorizontalAlignment="Center" LetterSpacing="-0.5" FontFamily="Inter, -apple-system, sans-serif"/>
-                                <TextBlock Text="VIERNES, 23 DE MAYO" FontSize="8.5" FontWeight="Bold" LetterSpacing="2.5" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif"/>
-                            </StackPanel>
-                            
-                            <!-- Bottom Home Swipe Bar -->
-                            <Border Height="3.5" Width="100" Background="White" CornerRadius="1.75" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20" Opacity="0.8"/>
-                        </Grid>
+                        <Viewbox Stretch="Uniform" Margin="20">
+                            <Grid>
+                                <!-- SMART PREVIEW: DESKTOP MAC (16:9) -->
+                                <Border Width="1920" Height="1080"
+                                        CornerRadius="16"
+                                        ClipToBounds="True"
+                                        BorderBrush="#252525"
+                                        BorderThickness="8"
+                                        IsVisible="{Binding IsDesktopWallpaperSelected}"
+                                        BoxShadow="0 25 50 0 #A0000000">
+                                    <Grid>
+                                        <Image Source="{Binding SelectedWallpaper.ImageBitmap}" Stretch="UniformToFill"/>
+                                        
+                                        <!-- SIMULADOR DE ESCRITORIO MAC / PC DOCK & MENU (💻) -->
+                                        <Grid IsVisible="{Binding IsDesktopOverlayVisible}" Background="Transparent" IsHitTestVisible="False">
+                                            <!-- Sleek Top Translucent Mac Menu Bar -->
+                                            <Border Height="35" VerticalAlignment="Top" Background="#AA08080A" BorderBrush="#1C1C1E" BorderThickness="0,0,0,1">
+                                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="24,0,24,0">
+                                                    <!-- Left Menu Links -->
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="20" VerticalAlignment="Center">
+                                                        <TextBlock Text="" FontSize="20" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="Finder" FontSize="14" Foreground="White" FontWeight="Black" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="Archivo" FontSize="14" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="Edición" FontSize="14" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                        <TextBlock Text="Visualización" FontSize="14" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                    
+                                                    <!-- Right Clock Info -->
+                                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="16" VerticalAlignment="Center">
+                                                        <TextBlock Text="📶" FontSize="14" Foreground="White" VerticalAlignment="Center" Opacity="0.8"/>
+                                                        <TextBlock Text="🔋 100%" FontSize="14" Foreground="White" FontFamily="monospace" VerticalAlignment="Center" Opacity="0.8"/>
+                                                        <TextBlock Text="Vie 09:41 AM" FontSize="14" Foreground="White" FontWeight="Black" FontFamily="monospace" VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </Grid>
+                                            </Border>
+                                            
+                                            <!-- Minimal macOS Bottom App Dock -->
+                                            <Border Height="80" Width="400" VerticalAlignment="Bottom" Margin="0,0,0,24" Background="#AA0E0E12" BorderBrush="#252528" BorderThickness="1" CornerRadius="28">
+                                                <StackPanel Orientation="Horizontal" Spacing="16" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                                    <Border Width="48" Height="48" CornerRadius="12" Background="#FF3B30" BorderBrush="#CCFF3B30" BorderThickness="1"/>
+                                                    <Border Width="48" Height="48" CornerRadius="12" Background="#34C759" BorderBrush="#CC34C759" BorderThickness="1"/>
+                                                    <Border Width="48" Height="48" CornerRadius="12" Background="#007AFF" BorderBrush="#CC007AFF" BorderThickness="1"/>
+                                                    <Border Width="48" Height="48" CornerRadius="12" Background="#FFCC00" BorderBrush="#CCFFCC00" BorderThickness="1"/>
+                                                    <Border Width="48" Height="48" CornerRadius="12" Background="#AF52DE" BorderBrush="#CCAF52DE" BorderThickness="1"/>
+                                                    <Border Width="48" Height="48" CornerRadius="12" Background="#5856D6" BorderBrush="#CC5856D6" BorderThickness="1"/>
+                                                    
+                                                    <Separator Width="1" Height="30" Background="#2C2C2E" Margin="8,0"/>
+                                                    <Border Width="48" Height="48" CornerRadius="12" Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
 
-                        <!-- SIMULADOR DE ESCRITORIO MAC / PC DOCK & MENU (💻) -->
-                        <Grid IsVisible="{Binding IsDesktopOverlayVisible}"
-                              Background="Transparent"
-                              IsHitTestVisible="False"
-                              VerticalAlignment="Stretch"
-                              HorizontalAlignment="Stretch">
-                            
-                            <!-- Sleek Top Translucent Mac Menu Bar -->
-                            <Border Height="22" VerticalAlignment="Top" Background="#AA08080A" BorderBrush="#1C1C1E" BorderThickness="0,0,0,1">
-                                <Grid ColumnDefinitions="Auto,*,Auto" Margin="12,0,12,0">
-                                    <!-- Left Menu Links -->
-                                    <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                                        <TextBlock Text="" FontSize="11" Foreground="White" FontWeight="Bold" VerticalAlignment="Center"/>
-                                        <TextBlock Text="Finder" FontSize="8" Foreground="White" FontWeight="Black" VerticalAlignment="Center"/>
-                                        <TextBlock Text="Archivo" FontSize="8" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
-                                        <TextBlock Text="Edición" FontSize="8" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
-                                        <TextBlock Text="Visualización" FontSize="8" Foreground="#8E8E93" FontWeight="Bold" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                    
-                                    <!-- Right Clock Info -->
-                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                                        <TextBlock Text="📶" FontSize="8" Foreground="White" VerticalAlignment="Center" Opacity="0.8"/>
-                                        <TextBlock Text="🔋 100%" FontSize="7" Foreground="White" FontFamily="monospace" VerticalAlignment="Center" Opacity="0.8"/>
-                                        <TextBlock Text="Vie 09:41 AM" FontSize="8" Foreground="White" FontWeight="Black" FontFamily="monospace" VerticalAlignment="Center"/>
-                                    </StackPanel>
+                                <!-- SMART PREVIEW: MOBILE (9:16) -->
+                                <Border Width="1080" Height="1920"
+                                        CornerRadius="140"
+                                        ClipToBounds="True"
+                                        BorderBrush="#101010"
+                                        BorderThickness="32"
+                                        IsVisible="{Binding IsMobileWallpaperSelected}"
+                                        BoxShadow="0 25 50 0 #A0000000">
+                                    <Grid>
+                                        <Image Source="{Binding SelectedWallpaper.ImageBitmap}" Stretch="UniformToFill"/>
+                                        
+                                        <!-- Dynamic Island Mockup -->
+                                        <Border Width="300" Height="85" CornerRadius="42" Background="Black" VerticalAlignment="Top" Margin="0,30,0,0"/>
+
+                                        <!-- SIMULADOR DE PANTALLA DE BLOQUEO (📱) -->
+                                        <Grid IsVisible="{Binding IsLockScreenOverlayVisible}" Background="Transparent" IsHitTestVisible="False">
+                                            <!-- Lock Icon -->
+                                            <TextBlock Text="🔒" FontSize="36" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,180,0,0"/>
+                                            
+                                            <!-- Dynamic Clock -->
+                                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,250,0,0" Spacing="10">
+                                                <TextBlock Text="09:41" FontSize="260" FontWeight="Light" Foreground="White" HorizontalAlignment="Center" LetterSpacing="-5" FontFamily="Inter, -apple-system, sans-serif"/>
+                                                <TextBlock Text="VIERNES, 23 DE MAYO" FontSize="36" FontWeight="Bold" LetterSpacing="6" Foreground="White" Opacity="0.75" HorizontalAlignment="Center" FontFamily="Inter, -apple-system, BlinkMacSystemFont, sans-serif"/>
+                                            </StackPanel>
+                                            
+                                            <!-- Bottom Home Swipe Bar -->
+                                            <Border Height="14" Width="400" Background="White" CornerRadius="7" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,40" Opacity="0.8"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                                
+                                <!-- CUADRÍCULA DE COMPOSICIÓN TÉCNICA / REGLA DE TERCIOS (📐) OVERLAY PARA AMBOS -->
+                                <Grid IsVisible="{Binding IsCompositionGridVisible}" Background="Transparent" IsHitTestVisible="False">
+                                    <Grid RowDefinitions="*,*,*" ColumnDefinitions="*,*,*">
+                                        <Border Grid.Row="0" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,2,2" Opacity="0.25"/>
+                                        <Border Grid.Row="0" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,2,2" Opacity="0.25"/>
+                                        <Border Grid.Row="0" Grid.Column="2" BorderBrush="White" BorderThickness="0,0,0,2" Opacity="0.25"/>
+                                        
+                                        <Border Grid.Row="1" Grid.Column="0" BorderBrush="White" BorderThickness="0,0,2,2" Opacity="0.25"/>
+                                        <Border Grid.Row="1" Grid.Column="1" BorderBrush="White" BorderThickness="0,0,2,2" Opacity="0.25"/>
+                                        <Border Grid.Row="1" Grid.Column="2" BorderBrush="White" BorderThickness="0,0,0,2" Opacity="0.25"/>
+                                    </Grid>
+                                    <Ellipse Width="100" Height="100" Stroke="White" StrokeThickness="4" StrokeDashArray="2,2" Opacity="0.4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Line StartPoint="-40,0" EndPoint="40,0" Stroke="White" StrokeThickness="4" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    <Line StartPoint="0,-40" EndPoint="0,40" Stroke="White" StrokeThickness="4" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                 </Grid>
-                            </Border>
-                            
-                            <!-- Minimal macOS Bottom App Dock -->
-                            <Border Height="36" Width="200" VerticalAlignment="Bottom" Margin="0,0,0,10" Background="#AA0E0E12" BorderBrush="#252528" BorderThickness="1" CornerRadius="12">
-                                <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <!-- Mock App wireframe circular chips with premium glass colors -->
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#FF3B30" BorderBrush="#CCFF3B30" BorderThickness="1"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#34C759" BorderBrush="#CC34C759" BorderThickness="1"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#007AFF" BorderBrush="#CC007AFF" BorderThickness="1"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#FFCC00" BorderBrush="#CCFFCC00" BorderThickness="1"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#AF52DE" BorderBrush="#CCAF52DE" BorderThickness="1"/>
-                                    <Border Width="20" Height="20" CornerRadius="10" Background="#5856D6" BorderBrush="#CC5856D6" BorderThickness="1"/>
-                                    
-                                    <Separator Width="1" Height="14" Background="#2C2C2E" Margin="2,0"/>
-                                    <Border Width="20" Height="20" CornerRadius="5" Background="#1C1C1E" BorderBrush="#2C2C2E" BorderThickness="1"/>
-                                </StackPanel>
-                            </Border>
-                            
-                            <!-- Aesthetic Calendar Widget floating in upper right corner -->
-                            <Border Width="90" Height="90" CornerRadius="14" Background="#AA0E0E12" BorderBrush="#1C1C1E" BorderThickness="1" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,38,15,0">
-                                <StackPanel Spacing="6" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <TextBlock Text="MAYO" FontSize="7.5" FontWeight="Black" LetterSpacing="1" Foreground="#FF3B30" HorizontalAlignment="Center"/>
-                                    <TextBlock Text="23" FontSize="26" FontWeight="Light" Foreground="White" HorizontalAlignment="Center" FontFamily="Inter, -apple-system, sans-serif"/>
-                                    <TextBlock Text="VIERNES" FontSize="7" FontWeight="Bold" LetterSpacing="0.5" Foreground="#71717A" HorizontalAlignment="Center"/>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                        
+                            </Grid>
+                        </Viewbox>
+
                         <!-- Indicador de carga offline -->
                         <Border Background="#AA08080C"
                                 CornerRadius="8"
@@ -1457,6 +1464,13 @@
                                             <TextBlock Text="Nombre del Repo" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
                                             <TextBox Text="{Binding RepoName, Mode=TwoWay}" PlaceholderText="Repo..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
                                         </StackPanel>
+                                        
+                                        <Border Height="1" Background="#1C1C1E" Margin="0,4"/>
+
+                                        <StackPanel>
+                                            <TextBlock Text="Gemini API Key (Para IA)" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                            <TextBox Text="{Binding GeminiToken, Mode=TwoWay}" PasswordChar="●" PlaceholderText="AIzaSy..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                        </StackPanel>
                                     </StackPanel>
 
                                     <!-- Privilegio actual calculado -->
@@ -1528,7 +1542,36 @@
 
                                         <StackPanel>
                                             <TextBlock Text="Ruta local o URL web" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
-                                            <TextBox Text="{Binding NewWpImagePath, Mode=TwoWay}" PlaceholderText="Ruta/URL..." Height="30" FontSize="11" Background="#1C1C1E" BorderBrush="#252528" Padding="6,4" CornerRadius="5"/>
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBox Grid.Column="0"
+                                                         Text="{Binding NewWpImagePath, Mode=TwoWay}"
+                                                         PlaceholderText="Ruta/URL..."
+                                                         Height="30"
+                                                         FontSize="11"
+                                                         Background="#1C1C1E"
+                                                         BorderBrush="#252528"
+                                                         Padding="6,4"
+                                                         CornerRadius="5"/>
+                                                <Button Grid.Column="1"
+                                                        Command="{Binding SelectLocalFileCommand}"
+                                                        Content="Examinar..."
+                                                        Height="30"
+                                                        FontSize="10"
+                                                        FontWeight="Bold"
+                                                        Background="#252528"
+                                                        Foreground="White"
+                                                        Margin="6,0,0,0"
+                                                        Padding="12,0"
+                                                        CornerRadius="5"
+                                                        VerticalContentAlignment="Center">
+                                                    <Button.Styles>
+                                                        <Style Selector="Button:pointerover /template/ ContentPresenter">
+                                                            <Setter Property="Background" Value="#3A3A3C"/>
+                                                            <Setter Property="Foreground" Value="White"/>
+                                                        </Style>
+                                                    </Button.Styles>
+                                                </Button>
+                                            </Grid>
                                         </StackPanel>
                                     </StackPanel>
 

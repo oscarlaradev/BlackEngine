@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Linq;
 using BlackEngine.Models;
 
 namespace BlackEngine.Services;
@@ -144,6 +145,79 @@ public class GitHubDatabaseService
         return (resultList, fileSha);
     }
 
+    private async Task<string?> UploadToReleasesAsync(string imageFileName, byte[] imageBytes)
+    {
+        SetupHeaders();
+        
+        long releaseId = 0;
+        
+        // 1. Intentar obtener el release con tag "wallpapers"
+        var getReleaseUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/tags/wallpapers";
+        var getResponse = await _client.GetAsync(getReleaseUrl);
+        
+        if (getResponse.IsSuccessStatusCode)
+        {
+            var getContent = await getResponse.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(getContent);
+            releaseId = doc.RootElement.GetProperty("id").GetInt64();
+        }
+        else
+        {
+            // 2. Si no existe, intentar crearlo
+            var createReleaseUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases";
+            var createPayload = new
+            {
+                tag_name = "wallpapers",
+                name = "Wallpapers Storage",
+                body = "Release for storing wallpaper assets dynamically uploaded from BlackEngine.",
+                draft = false,
+                prerelease = false
+            };
+            var createJson = JsonSerializer.Serialize(createPayload);
+            var createContent = new StringContent(createJson, Encoding.UTF8, "application/json");
+            
+            var createResponse = await _client.PostAsync(createReleaseUrl, createContent);
+            if (createResponse.IsSuccessStatusCode)
+            {
+                var createResultContent = await createResponse.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(createResultContent);
+                releaseId = doc.RootElement.GetProperty("id").GetInt64();
+            }
+            else
+            {
+                var errorMsg = await createResponse.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error al crear release: {errorMsg}");
+                return null;
+            }
+        }
+        
+        // 3. Subir el asset a la release
+        var uploadUrl = $"https://uploads.github.com/repos/{RepoOwner}/{RepoName}/releases/{releaseId}/assets?name={Uri.EscapeDataString(imageFileName)}";
+        
+        using var request = new HttpRequestMessage(HttpMethod.Post, uploadUrl);
+        request.Headers.UserAgent.ParseAdd("BlackEngine-Client");
+        request.Headers.Authorization = new AuthenticationHeaderValue("token", Token);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+        
+        request.Content = new ByteArrayContent(imageBytes);
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+        
+        var uploadResponse = await _client.SendAsync(request);
+        if (uploadResponse.IsSuccessStatusCode)
+        {
+            var uploadContent = await uploadResponse.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(uploadContent);
+            var browserDownloadUrl = doc.RootElement.GetProperty("browser_download_url").GetString();
+            return browserDownloadUrl;
+        }
+        else
+        {
+            var errorMsg = await uploadResponse.Content.ReadAsStringAsync();
+            Console.WriteLine($"Error al subir asset: {errorMsg}");
+            return null;
+        }
+    }
+
     // Subir un nuevo wallpaper a GitHub
     public async Task<bool> UploadWallpaperAsync(string title, string category, string author, string deviceType, byte[] imageBytes)
     {
@@ -151,33 +225,15 @@ public class GitHubDatabaseService
 
         try
         {
-            SetupHeaders();
-            
-            // 1. Subir la imagen física al repositorio (carpeta /images/)
             var safeTitle = title.Replace(" ", "_").ToLower();
             var imageFileName = $"{safeTitle}_{DateTime.UtcNow.Ticks}.jpg";
-            var imageUrlPath = $"images/{imageFileName}";
-            var base64Image = Convert.ToBase64String(imageBytes);
 
-            var imageUploadPayload = new
-            {
-                message = $"Add wallpaper image: {title}",
-                content = base64Image
-            };
-
-            var imageJson = JsonSerializer.Serialize(imageUploadPayload);
-            var imageContent = new StringContent(imageJson, Encoding.UTF8, "application/json");
-            
-            var imageUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/contents/{imageUrlPath}";
-            var imageResponse = await _client.PutAsync(imageUrl, imageContent);
-
-            if (!imageResponse.IsSuccessStatusCode)
+            // 1. Subir la imagen física directamente a GitHub Releases
+            var downloadUrl = await UploadToReleasesAsync(imageFileName, imageBytes);
+            if (string.IsNullOrEmpty(downloadUrl))
             {
                 return false;
             }
-
-            // Obtener URL de la imagen subida en Unsplash / Raw GitHub
-            var rawImageUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/main/{imageUrlPath}";
 
             // 2. Leer la base de datos actual database/wallpapers.json con su respectivo SHA
             var (currentList, dbSha) = await FetchWallpapersAsync();
@@ -188,8 +244,8 @@ public class GitHubDatabaseService
                 Title = title,
                 Author = author,
                 Category = category,
-                ImageUrl = rawImageUrl,
-                HighResUrl = rawImageUrl,
+                ImageUrl = downloadUrl,
+                HighResUrl = downloadUrl,
                 Likes = new Random().Next(100, 500),
                 DownloadsCount = 0,
                 Uploader = Username,
@@ -202,6 +258,7 @@ public class GitHubDatabaseService
             var serializedDb = JsonSerializer.Serialize(currentList, new JsonSerializerOptions { WriteIndented = true });
             var base64Db = Convert.ToBase64String(Encoding.UTF8.GetBytes(serializedDb));
 
+            SetupHeaders();
             var dbPayload = new
             {
                 message = $"Update wallpapers database: Add {title}",
@@ -241,7 +298,43 @@ public class GitHubDatabaseService
             int index = currentList.FindIndex(w => w.Title.Equals(title, StringComparison.OrdinalIgnoreCase));
             if (index == -1) return false;
 
-            // También podemos intentar borrar el archivo de imagen física si posee SHA (opcional, por simplicidad moderamos eliminando el registro)
+            var wallpaperToDelete = currentList[index];
+
+            // 2.5 Intentar borrar el archivo de imagen física si posee SHA (opcional, por simplicidad moderamos eliminando el registro)
+            // Extraer el nombre de archivo del ImageUrl para buscarlo en el release "wallpapers"
+            if (!string.IsNullOrEmpty(wallpaperToDelete.ImageUrl))
+            {
+                var fileName = wallpaperToDelete.ImageUrl.Split('/').LastOrDefault();
+                if (!string.IsNullOrEmpty(fileName))
+                {
+                    try
+                    {
+                        var getReleaseUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/tags/wallpapers";
+                        var getResponse = await _client.GetAsync(getReleaseUrl);
+                        if (getResponse.IsSuccessStatusCode)
+                        {
+                            var getContent = await getResponse.Content.ReadAsStringAsync();
+                            using var doc = JsonDocument.Parse(getContent);
+                            var assets = doc.RootElement.GetProperty("assets");
+                            foreach (var asset in assets.EnumerateArray())
+                            {
+                                if (asset.GetProperty("name").GetString() == fileName)
+                                {
+                                    var assetId = asset.GetProperty("id").GetInt64();
+                                    var deleteAssetUrl = $"https://api.github.com/repos/{RepoOwner}/{RepoName}/releases/assets/{assetId}";
+                                    await _client.DeleteAsync(deleteAssetUrl);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Aviso: No se pudo eliminar el asset físico de Releases: {ex.Message}");
+                    }
+                }
+            }
+
             currentList.RemoveAt(index);
 
             // 3. Comprometer los cambios de vuelta en GitHub
