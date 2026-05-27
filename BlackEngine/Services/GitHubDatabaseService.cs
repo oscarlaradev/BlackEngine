@@ -133,6 +133,11 @@ public class GitHubDatabaseService
                 
                 if (deserialized != null)
                 {
+                    foreach (var wp in deserialized)
+                    {
+                        if (wp.DeviceType != null && wp.DeviceType.Contains("ComboBoxItem")) wp.DeviceType = "Móvil";
+                        if (wp.Category != null && wp.Category.Contains("ComboBoxItem")) wp.Category = "Abstracto";
+                    }
                     resultList = deserialized;
                 }
             }

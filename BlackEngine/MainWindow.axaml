@@ -2,6 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:vm="using:BlackEngine.ViewModels"
         xmlns:controls="using:BlackEngine.Controls"
         mc:Ignorable="d"
@@ -410,7 +411,7 @@
                                                     Width="32" Height="32" CornerRadius="16"
                                                     Background="#801C1C1E" BorderBrush="#30FFFFFF" BorderThickness="1"
                                                     ToolTip.Tip="Eliminar de la nube">
-                                                <PathIcon Data="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" 
+                                                <PathIcon Data="M19 6L5 6M10 11V17M14 11V17M18 6V20C18 21.1 17.1 22 16 22H8C6.9 22 6 21.1 6 20V6M15 6V4C15 2.9 14.1 2 13 2H11C9.9 2 9 2.9 9 4V6" 
                                                           Foreground="#FF453A" Width="14" Height="14"/>
                                                 <Button.Styles>
                                                     <Style Selector="Button:pointerover">
@@ -438,8 +439,8 @@
                                                         <Setter Property="Foreground" Value="White"/>
                                                     </Style>
                                                 </ToggleButton.Styles>
-                                                <!-- SVG Path for Heart -->
-                                                <PathIcon Data="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" 
+                                                <!-- SVG Path for Heart Outline (Minimalist) -->
+                                                <PathIcon Data="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z" 
                                                           Foreground="#EBEBF5" Width="14" Height="14"/>
                                             </ToggleButton>
                                         </Grid>
@@ -1523,19 +1524,24 @@
                                         <Grid ColumnDefinitions="*,*">
                                             <StackPanel Grid.Column="0" Margin="0,0,4,0">
                                                 <TextBlock Text="Categoría" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
-                                                <ComboBox SelectedItem="{Binding NewWpCategory}" Height="30" HorizontalAlignment="Stretch" Background="#1C1C1E" BorderBrush="#252528" CornerRadius="5" FontSize="10">
-                                                    <ComboBoxItem Content="Minimalista"/>
-                                                    <ComboBoxItem Content="Arquitectura"/>
-                                                    <ComboBoxItem Content="Texturas"/>
-                                                    <ComboBoxItem Content="Líneas"/>
+                                                <ComboBox SelectedItem="{Binding NewWpCategory}" IsEnabled="False" Height="30" HorizontalAlignment="Stretch" Background="#1C1C1E" BorderBrush="#252528" CornerRadius="5" FontSize="10">
+                                                    <sys:String>Minimalista</sys:String>
+                                                    <sys:String>Arquitectura</sys:String>
+                                                    <sys:String>Texturas</sys:String>
+                                                    <sys:String>Líneas</sys:String>
+                                                    <sys:String>Paisaje</sys:String>
+                                                    <sys:String>Cyberpunk</sys:String>
+                                                    <sys:String>Abstracto</sys:String>
+                                                    <sys:String>Fotografía</sys:String>
+                                                    <sys:String>Otro</sys:String>
                                                 </ComboBox>
                                             </StackPanel>
 
                                             <StackPanel Grid.Column="1" Margin="4,0,0,0">
-                                                <TextBlock Text="Dispositivo" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
-                                                <ComboBox SelectedItem="{Binding NewWpDeviceType}" Height="30" HorizontalAlignment="Stretch" Background="#1C1C1E" BorderBrush="#252528" CornerRadius="5" FontSize="10">
-                                                    <ComboBoxItem Content="Móvil"/>
-                                                    <ComboBoxItem Content="PC"/>
+                                                <TextBlock Text="Dispositivo (Automático)" FontSize="9" Foreground="#606060" Margin="0,0,0,3"/>
+                                                <ComboBox SelectedItem="{Binding NewWpDeviceType}" IsEnabled="False" Height="30" HorizontalAlignment="Stretch" Background="#1C1C1E" BorderBrush="#252528" CornerRadius="5" FontSize="10">
+                                                    <sys:String>Móvil</sys:String>
+                                                    <sys:String>Desktop</sys:String>
                                                 </ComboBox>
                                             </StackPanel>
                                         </Grid>

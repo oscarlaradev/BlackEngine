@@ -1033,13 +1033,25 @@ public class MainWindowViewModel : INotifyPropertyChanged
                         var mime = extension == ".png" ? "image/png" : 
                                    (extension == ".webp" ? "image/webp" : "image/jpeg");
                                    
+                        // Analizar resolución físicamente
+                        try 
+                        {
+                            using var stream = System.IO.File.OpenRead(filePath);
+                            var bitmap = new Avalonia.Media.Imaging.Bitmap(stream);
+                            bool isDesktop = bitmap.PixelSize.Width >= bitmap.PixelSize.Height;
+                            NewWpDeviceType = isDesktop ? "Desktop" : "Móvil";
+                        } 
+                        catch { }
+                        
+                        // Autor siempre fijo a @BlackEngine por regla de diseño
+                        NewWpAuthor = "@BlackEngine";
+
                         var metadata = await _aiService.AnalyzeWallpaperAsync(bytes, mime);
                         if (metadata != null)
                         {
                             NewWpTitle = metadata.Title;
-                            NewWpAuthor = metadata.Author;
+                            // Solo actualizamos categoría (el modelo aún devuelve DeviceType pero lo ignoramos)
                             NewWpCategory = metadata.Category;
-                            NewWpDeviceType = metadata.DeviceType;
                             ShowToast("¡Metadatos generados por IA!");
                         }
                         else
