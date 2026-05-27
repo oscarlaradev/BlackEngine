@@ -40,5 +40,19 @@
     "DownloadsCount": 0,
     "IsFavorite": false,
     "ImageBitmap": null
+  },
+  {
+    "Title": "Danza de Puntos Brillantes",
+    "Author": "@BlackEngine",
+    "ImageUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/danza_de_puntos_brillantes_639155213431037160.jpg",
+    "Category": "Minimalista",
+    "HighResUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/danza_de_puntos_brillantes_639155213431037160.jpg",
+    "Sha": "",
+    "Uploader": "oscarlaradev",
+    "DeviceType": "Desktop",
+    "Likes": 459,
+    "DownloadsCount": 0,
+    "IsFavorite": false,
+    "ImageBitmap": null
   }
 ]
