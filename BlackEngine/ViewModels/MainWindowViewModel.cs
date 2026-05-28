@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.IO;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -852,8 +853,22 @@ public class MainWindowViewModel : INotifyPropertyChanged
             if (gitList.Count > 0)
             {
                 _allWallpapers.Clear();
+                // REVERSA: Mostrar los más recientes primero (los últimos añadidos a la base de datos)
+                gitList.Reverse();
+                var settings = _localStorage.LoadSettings();
                 foreach (var wp in gitList)
                 {
+                    if (settings.FavoriteWallpapers.Contains(wp.Sha))
+                    {
+                        wp.IsFavorite = true;
+                        wp.Likes = 1;
+                    }
+                    else
+                    {
+                        wp.IsFavorite = false;
+                        wp.Likes = 0;
+                    }
+                    wp.DownloadsCount = 0; // Reset downloads count to zero for production
                     _allWallpapers.Add(wp);
                 }
                 ApplyFilters();
@@ -1201,26 +1216,125 @@ public class MainWindowViewModel : INotifyPropertyChanged
     }
 
     // INNOVACIÓN PRO: Extractor automático de paleta armónica premium
-    private void ExtractHarmonicPalette(Wallpaper wp)
+    private async void ExtractHarmonicPalette(Wallpaper wp)
     {
         ExtractedColors.Clear();
         
-        // Calcular colores coherentes y vectoriales finos basados en la firma o título de la imagen
-        int seed = wp.Title.GetHashCode();
-        var rand = new Random(seed);
-
-        double baseHue = rand.NextDouble() * 360.0;
-
-        // Generar 5 variaciones ultra-sofisticadas de contraste suizo:
-        ExtractedColors.Add(Color.Parse("#121212")); // Obsidian
-        ExtractedColors.Add(Color.Parse("#2A2A2F")); // Ceniza
-        ExtractedColors.Add(HslToRgb(baseHue, 0.12, 0.40)); // Tonalidad dominante apastelada
-        ExtractedColors.Add(HslToRgb((baseHue + 150) % 360, 0.08, 0.60)); // Armónico opuesto suave
-        ExtractedColors.Add(HslToRgb(baseHue, 0.30, 0.85)); // Acento brillante
-
         OnPropertyChanged(nameof(SelectedWpDimensions));
         OnPropertyChanged(nameof(SelectedWpMood));
         OnPropertyChanged(nameof(SelectedWpColorEnergy));
+
+        // Intento de extracción real asíncrona usando ImageSharp
+        try 
+        {
+            var cacheDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BlackEngine", "Cache");
+            var localFile = Path.Combine(cacheDir, wp.Sha + ".jpg");
+            byte[]? imageBytes = null;
+            
+            if (File.Exists(localFile)) 
+            {
+                imageBytes = await File.ReadAllBytesAsync(localFile);
+            }
+            else if (!string.IsNullOrEmpty(wp.ImageUrl))
+            {
+                using var client = new HttpClient();
+                imageBytes = await client.GetByteArrayAsync(wp.ImageUrl);
+            }
+
+            if (imageBytes != null)
+            {
+                await Task.Run(() => 
+                {
+                    using var image = SixLabors.ImageSharp.Image.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(imageBytes);
+                    var colorCounts = new Dictionary<SixLabors.ImageSharp.PixelFormats.Rgba32, int>();
+                    
+                    int step = Math.Max(1, Math.Min(image.Width, image.Height) / 50); // Muestreo rápido
+                    
+                    for (int y = 0; y < image.Height; y += step)
+                    {
+                        for (int x = 0; x < image.Width; x += step)
+                        {
+                            var pixel = image[x, y];
+                            // Ignorar colores casi negros o muy blancos
+                            if (pixel.R < 20 && pixel.G < 20 && pixel.B < 20) continue;
+                            if (pixel.R > 240 && pixel.G > 240 && pixel.B > 240) continue;
+                            
+                            // Cuantización simple bajando precisión
+                            var quantized = new SixLabors.ImageSharp.PixelFormats.Rgba32((byte)(pixel.R / 16 * 16), (byte)(pixel.G / 16 * 16), (byte)(pixel.B / 16 * 16), 255);
+                            
+                            if (colorCounts.ContainsKey(quantized))
+                                colorCounts[quantized]++;
+                            else
+                                colorCounts[quantized] = 1;
+                        }
+                    }
+
+                    // Filtrar colores asegurando distancia euclidiana
+                    var topColors = colorCounts.OrderByDescending(kvp => kvp.Value).Select(kvp => kvp.Key).ToList();
+                    var distinctColors = new List<Color>();
+                    
+                    foreach (var c in topColors)
+                    {
+                        bool isDistinct = true;
+                        foreach (var dc in distinctColors)
+                        {
+                            double dist = Math.Sqrt(Math.Pow(c.R - dc.R, 2) + Math.Pow(c.G - dc.G, 2) + Math.Pow(c.B - dc.B, 2));
+                            if (dist < 55.0) // Umbral de diferencia alto para paletas vibrantes
+                            {
+                                isDistinct = false;
+                                break;
+                            }
+                        }
+                        if (isDistinct)
+                        {
+                            distinctColors.Add(Color.FromRgb(c.R, c.G, c.B));
+                            if (distinctColors.Count == 5) break;
+                        }
+                    }
+
+                    // Si logramos sacar colores, actualizamos la interfaz
+                    if (distinctColors.Count > 0)
+                    {
+                        Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+                        {
+                            ExtractedColors.Clear();
+                            foreach (var color in distinctColors)
+                            {
+                                ExtractedColors.Add(color);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        ApplyFallbackColors(wp);
+                    }
+                });
+            }
+            else
+            {
+                ApplyFallbackColors(wp);
+            }
+        }
+        catch 
+        {
+            ApplyFallbackColors(wp);
+        }
+    }
+
+    private void ApplyFallbackColors(Wallpaper wp)
+    {
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            ExtractedColors.Clear();
+            int seed = wp.Title.GetHashCode() ^ wp.Category.GetHashCode();
+            var rand = new Random(seed);
+            double baseHue = rand.NextDouble() * 360.0;
+            ExtractedColors.Add(HslToRgb(baseHue, 0.40, 0.15));
+            ExtractedColors.Add(HslToRgb(baseHue, 0.85, 0.50));
+            ExtractedColors.Add(HslToRgb((baseHue + 180) % 360, 0.80, 0.60));
+            ExtractedColors.Add(HslToRgb((baseHue + 30) % 360, 0.70, 0.55));
+            ExtractedColors.Add(HslToRgb((baseHue - 30 + 360) % 360, 0.60, 0.80));
+        });
     }
 
     private void ApplyExtractedColor(Color color)
@@ -1307,6 +1421,20 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         if (wp == null) return;
         
+        var settings = _localStorage.LoadSettings();
+        if (wp.IsFavorite)
+        {
+            if (!settings.FavoriteWallpapers.Contains(wp.Sha))
+                settings.FavoriteWallpapers.Add(wp.Sha);
+            wp.Likes = 1; // Real like count for current user
+        }
+        else
+        {
+            settings.FavoriteWallpapers.Remove(wp.Sha);
+            wp.Likes = 0; // Reset to zero
+        }
+        _localStorage.SaveSettings(settings);
+        
         if (SelectedCategory == "Favoritos")
         {
             ApplyFilters();
@@ -1356,6 +1484,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
                     var fallbackFileName = $"{wp.Title.Replace(" ", "_")}_Local.png";
                     var fallbackPath = Path.Combine(DownloadPath, fallbackFileName);
                     wp.ImageBitmap.Save(fallbackPath);
+                    wp.DownloadsCount++; // Increment download count even for local copy fallback save
                     ShowToast("¡Guardado desde copia en memoria!");
                     CalculateCacheSize();
                     OpenFolder(DownloadPath);

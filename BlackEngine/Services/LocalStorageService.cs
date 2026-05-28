@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace BlackEngine.Services;
 
@@ -11,6 +12,7 @@ public class AppSettings
     public string GithubRepoOwner { get; set; } = string.Empty;
     public string GithubRepoName { get; set; } = string.Empty;
     public string GeminiToken { get; set; } = string.Empty;
+    public List<string> FavoriteWallpapers { get; set; } = new();
 }
 
 public class LocalStorageService

@@ -251,7 +251,7 @@ public class GitHubDatabaseService
                 Category = category,
                 ImageUrl = downloadUrl,
                 HighResUrl = downloadUrl,
-                Likes = new Random().Next(100, 500),
+                Likes = 0,
                 DownloadsCount = 0,
                 Uploader = Username,
                 DeviceType = deviceType
