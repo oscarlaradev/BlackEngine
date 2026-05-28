@@ -124,5 +124,19 @@
     "DownloadsCount": 0,
     "IsFavorite": false,
     "ImageBitmap": null
+  },
+  {
+    "Title": "S\u00EDmbolo Met\u00E1lico Oscuro",
+    "Author": "@BlackEngine",
+    "ImageUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/simbolo_metalico_oscuro_639155236449119550.jpg",
+    "Category": "Abstracto",
+    "HighResUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/simbolo_metalico_oscuro_639155236449119550.jpg",
+    "Sha": "",
+    "Uploader": "oscarlaradev",
+    "DeviceType": "Desktop",
+    "Likes": 0,
+    "DownloadsCount": 0,
+    "IsFavorite": false,
+    "ImageBitmap": null
   }
 ]
