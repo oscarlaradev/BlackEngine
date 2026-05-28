@@ -138,5 +138,19 @@
     "DownloadsCount": 0,
     "IsFavorite": false,
     "ImageBitmap": null
+  },
+  {
+    "Title": "Guante de Diamantes",
+    "Author": "@BlackEngine",
+    "ImageUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/guante_de_diamantes_639155240826691200.jpg",
+    "Category": "Fotograf\u00EDa",
+    "HighResUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/guante_de_diamantes_639155240826691200.jpg",
+    "Sha": "",
+    "Uploader": "oscarlaradev",
+    "DeviceType": "Desktop",
+    "Likes": 0,
+    "DownloadsCount": 0,
+    "IsFavorite": false,
+    "ImageBitmap": null
   }
 ]
