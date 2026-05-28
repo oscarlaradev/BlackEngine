@@ -180,5 +180,19 @@
     "DownloadsCount": 0,
     "IsFavorite": false,
     "ImageBitmap": null
+  },
+  {
+    "Title": "Redenci\u00F3n Alada",
+    "Author": "@BlackEngine",
+    "ImageUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/redencion_alada_639155249717828200.jpg",
+    "Category": "Minimalista",
+    "HighResUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/redencion_alada_639155249717828200.jpg",
+    "Sha": "",
+    "Uploader": "oscarlaradev",
+    "DeviceType": "Desktop",
+    "Likes": 0,
+    "DownloadsCount": 0,
+    "IsFavorite": false,
+    "ImageBitmap": null
   }
 ]
