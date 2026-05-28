@@ -166,5 +166,19 @@
     "DownloadsCount": 0,
     "IsFavorite": false,
     "ImageBitmap": null
+  },
+  {
+    "Title": "Eleg\u00EDa Plateada",
+    "Author": "@BlackEngine",
+    "ImageUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/elegia_plateada_639155249355348660.jpg",
+    "Category": "Otro",
+    "HighResUrl": "https://github.com/oscarlaradev/BlackEngine/releases/download/wallpapers/elegia_plateada_639155249355348660.jpg",
+    "Sha": "",
+    "Uploader": "oscarlaradev",
+    "DeviceType": "Desktop",
+    "Likes": 0,
+    "DownloadsCount": 0,
+    "IsFavorite": false,
+    "ImageBitmap": null
   }
 ]
